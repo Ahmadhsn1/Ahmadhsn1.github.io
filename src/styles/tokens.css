@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300..800&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap');
+
+:root {
+	color-scheme: dark;
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+
+	/* Obsidian & Ember */
+	--bg: #09090b;
+	--bg-raised: #111114;
+	--surface: rgb(255 255 255 / 3%);
+	--surface-strong: rgb(255 255 255 / 6%);
+	--line: rgb(255 255 255 / 8%);
+	--line-strong: rgb(255 255 255 / 15%);
+	--text: #f2efe8;
+	--text-soft: #bdb8ae;
+	--muted: #7d7a74;
+	--ember: #ff6a3d;
+	--ember-soft: rgb(255 106 61 / 14%);
+	--gold: #ffc56e;
+	--mint: #7dd3a8;
+	--danger: #ff5d5d;
+
+	--font-body: 'Geist', ui-sans-serif, system-ui, sans-serif;
+	--font-serif: 'Instrument Serif', Georgia, serif;
+	--font-mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+	--radius-sm: 10px;
+	--radius: 18px;
+	--radius-lg: 28px;
+	--shell: 1240px;
+	--gutter: clamp(16px, 4vw, 40px);
+	--ease: cubic-bezier(.2, .8, .2, 1);
+}

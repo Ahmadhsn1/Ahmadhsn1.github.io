@@ -1,0 +1,972 @@
+/* ───────── Stage ───────── */
+
+.dev-scene {
+	width: 100%;
+	max-width: 680px;
+	justify-self: end;
+	animation: rise 1.1s .2s var(--ease) both;
+}
+
+.dev-stage {
+	--px: 0px;
+	--py: 0px;
+	position: relative;
+	width: 100%;
+	aspect-ratio: 1 / .94;
+	container-type: inline-size;
+	isolation: isolate;
+}
+
+.stage-backdrop {
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+}
+
+.stage-orb {
+	position: absolute;
+	left: 4%;
+	bottom: 10%;
+	width: 72%;
+	aspect-ratio: 1;
+	border-radius: 50%;
+	background: radial-gradient(circle at 50% 55%, rgb(255 106 61 / 28%), rgb(255 106 61 / 6%) 45%, transparent 70%);
+	filter: blur(6px);
+}
+
+.stage-ring {
+	position: absolute;
+	left: 8%;
+	bottom: 12%;
+	width: 64%;
+	aspect-ratio: 1;
+	border-radius: 50%;
+	border: 1px dashed rgb(255 255 255 / 10%);
+	animation: spin 80s linear infinite;
+}
+
+.stage-ring::after {
+	content: '';
+	position: absolute;
+	top: 12%;
+	left: 12%;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--ember);
+	box-shadow: 0 0 14px var(--ember);
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.stage-character {
+	position: absolute;
+	left: -6%;
+	bottom: 0;
+	width: 78%;
+	transform: translate3d(calc(var(--px) * -.5), calc(var(--py) * -.5), 0);
+	transition: transform .5s var(--ease);
+}
+
+.stage-status {
+	position: absolute;
+	z-index: 3;
+	top: 3%;
+	left: 2%;
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 14px 8px 8px;
+	border: 1px solid var(--line-strong);
+	border-radius: 999px;
+	background: rgb(17 17 20 / 80%);
+	backdrop-filter: blur(12px);
+	font-size: 13px;
+	font-weight: 500;
+	white-space: nowrap;
+	box-shadow: 0 12px 30px -12px rgb(0 0 0 / 70%);
+	animation: chip-in .5s var(--ease) both;
+}
+
+.status-icon {
+	display: grid;
+	place-items: center;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background: var(--ember-soft);
+	color: var(--ember);
+	font-size: 12px;
+}
+
+@keyframes chip-in {
+	from {
+		opacity: 0;
+		transform: translateY(6px) scale(.96);
+	}
+}
+
+.stage-chip {
+	position: absolute;
+	z-index: 2;
+	padding: 7px 12px;
+	border: 1px solid var(--line-strong);
+	border-radius: 10px;
+	background: rgb(17 17 20 / 75%);
+	backdrop-filter: blur(10px);
+	font-family: var(--font-mono);
+	font-size: 11px;
+	color: var(--text-soft);
+	animation: bob 6s ease-in-out infinite;
+}
+
+.stage-chip::before {
+	content: '';
+	display: inline-block;
+	width: 6px;
+	height: 6px;
+	margin-right: 8px;
+	border-radius: 50%;
+	background: var(--gold);
+	vertical-align: middle;
+}
+
+.chip-a {
+	top: 20%;
+	left: 0;
+}
+
+.chip-b {
+	right: 2%;
+	bottom: 30%;
+	animation-delay: -3s;
+}
+
+.chip-b::before {
+	background: var(--mint);
+}
+
+@keyframes bob {
+	50% {
+		transform: translateY(-8px);
+	}
+}
+
+/* ───────── Step controls ───────── */
+
+.stage-steps {
+	display: grid;
+	grid-template-columns: repeat(6, minmax(0, 1fr));
+	gap: 8px;
+	margin-top: 18px;
+}
+
+.step {
+	display: grid;
+	gap: 8px;
+	padding: 0;
+	border: 0;
+	background: none;
+	text-align: left;
+	font-family: var(--font-mono);
+	font-size: 11px;
+	letter-spacing: .04em;
+	text-transform: uppercase;
+	color: var(--muted);
+	transition: color .3s;
+}
+
+.step:hover,
+.step.is-active {
+	color: var(--text);
+}
+
+.step-bar {
+	height: 2px;
+	border-radius: 2px;
+	background: var(--line-strong);
+	overflow: hidden;
+}
+
+.step-bar span {
+	display: block;
+	height: 100%;
+	background: var(--ember);
+}
+
+/* ───────── Code editor ───────── */
+
+.code-editor {
+	position: absolute;
+	z-index: 2;
+	top: 13%;
+	right: 0;
+	width: 50%;
+	overflow: hidden;
+	border: 1px solid var(--line-strong);
+	border-radius: 14px;
+	background: rgb(15 15 18 / 88%);
+	backdrop-filter: blur(16px);
+	box-shadow: 0 40px 80px -30px rgb(0 0 0 / 85%), 0 0 0 1px rgb(0 0 0 / 40%), inset 0 1px 0 rgb(255 255 255 / 6%);
+	font-family: var(--font-mono);
+	font-size: clamp(8.5px, 1.62cqi, 11px);
+	line-height: 1.75;
+	transform: translate3d(var(--px), var(--py), 0);
+	transition: transform .5s var(--ease), border-color .4s, box-shadow .4s;
+}
+
+.code-editor[data-phase='error'] {
+	border-color: rgb(255 93 93 / 45%);
+	box-shadow: 0 40px 80px -30px rgb(0 0 0 / 85%), 0 0 40px -10px rgb(255 93 93 / 35%);
+}
+
+.code-editor[data-phase='success'] {
+	border-color: rgb(125 211 168 / 45%);
+	box-shadow: 0 40px 80px -30px rgb(0 0 0 / 85%), 0 0 40px -10px rgb(125 211 168 / 30%);
+}
+
+.editor-bar {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: .8em 1em;
+	border-bottom: 1px solid var(--line);
+}
+
+.editor-dots {
+	display: flex;
+	gap: 6px;
+}
+
+.editor-dots i {
+	width: 9px;
+	height: 9px;
+	border-radius: 50%;
+	background: #3a3a41;
+}
+
+.editor-dots i:first-child {
+	background: #ff6a5f;
+}
+
+.editor-dots i:nth-child(2) {
+	background: #ffc56e;
+}
+
+.editor-dots i:last-child {
+	background: #6fd08c;
+}
+
+.editor-path {
+	color: var(--muted);
+}
+
+.editor-tabs {
+	display: flex;
+	border-bottom: 1px solid var(--line);
+	background: rgb(0 0 0 / 20%);
+}
+
+.editor-tab {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: .45em 1.1em;
+	color: var(--muted);
+	border-right: 1px solid var(--line);
+}
+
+.editor-tab b {
+	font-weight: 500;
+	font-size: .8em;
+	color: #6aa7ff;
+}
+
+.editor-tab.is-active {
+	color: var(--text);
+	background: rgb(255 255 255 / 3%);
+	box-shadow: inset 0 -1px 0 var(--ember);
+}
+
+.tab-dirty {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--text-soft);
+}
+
+.editor-code {
+	padding: .8em 0;
+	min-height: 9.8em;
+}
+
+.code-line {
+	display: flex;
+	padding-right: 1em;
+	white-space: pre;
+	transition: background .3s;
+}
+
+.code-line.is-empty .line-text {
+	visibility: hidden;
+}
+
+.line-no {
+	flex: 0 0 2.6em;
+	padding-right: 1em;
+	text-align: right;
+	color: #4b4a50;
+	user-select: none;
+}
+
+.line-text {
+	position: relative;
+	color: #d6d2ca;
+}
+
+.code-line.mark-error {
+	background: rgb(255 93 93 / 12%);
+	box-shadow: inset 2px 0 0 var(--danger);
+}
+
+.code-line.mark-error .line-text {
+	text-decoration: underline wavy var(--danger);
+	text-underline-offset: 3px;
+}
+
+.code-line.mark-fixing,
+.code-line.mark-success {
+	background: rgb(125 211 168 / 10%);
+	box-shadow: inset 2px 0 0 var(--mint);
+}
+
+.inline-hint {
+	margin-left: 1.2em;
+	color: var(--danger);
+	font-style: italic;
+	text-decoration: none;
+	display: inline-block;
+}
+
+.tk-kw {
+	color: #ff8a65;
+}
+
+.tk-fn {
+	color: #ffd28a;
+}
+
+.tk-vr {
+	color: #e8e4dc;
+}
+
+.tk-pn {
+	color: #9b978f;
+}
+
+.tk-op {
+	color: #7dd3a8;
+}
+
+.tk-st {
+	color: #b5d98a;
+}
+
+.caret {
+	display: inline-block;
+	width: .55em;
+	height: 1.2em;
+	margin-left: 1px;
+	vertical-align: -.2em;
+	background: var(--ember);
+	animation: caret 1s steps(1) infinite;
+}
+
+@keyframes caret {
+	50% {
+		opacity: 0;
+	}
+}
+
+.editor-terminal {
+	min-height: 6.6em;
+	padding: 0 1em .7em;
+	border-top: 1px solid var(--line);
+	background: rgb(0 0 0 / 25%);
+}
+
+.terminal-head {
+	display: flex;
+	justify-content: space-between;
+	padding: .5em 0 .3em;
+	font-size: .85em;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+
+.editor-terminal p {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	animation: term-in .3s var(--ease) both;
+}
+
+@keyframes term-in {
+	from {
+		opacity: 0;
+		transform: translateX(-4px);
+	}
+}
+
+.term-cmd {
+	color: var(--text);
+}
+
+.term-dim {
+	color: var(--muted);
+}
+
+.term-err {
+	color: var(--danger);
+}
+
+.term-ok {
+	color: var(--mint);
+}
+
+.editor-status {
+	display: flex;
+	align-items: center;
+	gap: 1.2em;
+	padding: .35em 1em;
+	border-top: 1px solid var(--line);
+	font-size: .85em;
+	color: var(--muted);
+}
+
+.status-phase {
+	display: inline-flex;
+	align-items: center;
+	gap: .5em;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	color: var(--text-soft);
+}
+
+.status-phase i {
+	width: 6px;
+	height: 6px;
+	flex: none;
+	border-radius: 50%;
+	background: var(--ember);
+}
+
+.code-editor[data-phase='error'] .status-phase i {
+	background: var(--danger);
+}
+
+.code-editor[data-phase='success'] .status-phase i,
+.code-editor[data-phase='coffee'] .status-phase i {
+	background: var(--mint);
+}
+
+.status-right {
+	margin-left: auto;
+	white-space: nowrap;
+}
+
+/* ───────── Character ───────── */
+
+.dev-svg {
+	display: block;
+	width: 100%;
+	height: auto;
+	overflow: visible;
+	--logo: var(--ember);
+}
+
+.dev-svg[data-phase='error'] {
+	--logo: #ff5d5d;
+}
+
+.dev-svg[data-phase='success'],
+.dev-svg[data-phase='coffee'] {
+	--logo: #7dd3a8;
+}
+
+.dev-svg[data-phase='fixing'] {
+	--logo: #ffc56e;
+}
+
+.dev-svg g,
+.dev-svg path,
+.dev-svg ellipse,
+.dev-svg circle,
+.dev-svg rect {
+	transform-box: view-box;
+}
+
+.halo-stop {
+	stop-color: var(--logo);
+	transition: stop-color .6s;
+}
+
+.face-glow {
+	fill: var(--logo);
+	transition: fill .6s;
+}
+
+.logo-halo {
+	fill: var(--logo);
+	opacity: .55;
+	transition: fill .6s;
+	animation: glow 2.4s ease-in-out infinite;
+}
+
+.logo-text {
+	fill: var(--logo);
+	font-family: var(--font-mono);
+	font-size: 14px;
+	font-weight: 500;
+	transition: fill .6s;
+}
+
+@keyframes glow {
+	50% {
+		opacity: .25;
+	}
+}
+
+.dev-svg .v {
+	opacity: 0;
+	transition: opacity .28s ease;
+}
+
+/* Arms */
+.dev-svg:not([data-phase='thinking']) .arm-a-type,
+.dev-svg[data-phase='thinking'] .arm-a-chin,
+.dev-svg:not([data-phase='coffee']):not([data-phase='success']) .arm-b-type,
+.dev-svg[data-phase='coffee'] .arm-b-mug,
+.dev-svg[data-phase='success'] .arm-b-fist {
+	opacity: 1;
+}
+
+/* Eyes */
+.dev-svg:not([data-phase='success']):not([data-phase='coffee']) .eyes-open,
+.dev-svg[data-phase='success'] .eyes-happy,
+.dev-svg[data-phase='coffee'] .eyes-happy {
+	opacity: 1;
+}
+
+/* Mouths */
+.dev-svg[data-phase='typing'] .m-focus,
+.dev-svg[data-phase='fixing'] .m-focus,
+.dev-svg[data-phase='thinking'] .m-think,
+.dev-svg[data-phase='error'] .m-worried,
+.dev-svg[data-phase='success'] .m-grin,
+.dev-svg[data-phase='coffee'] .m-sip {
+	opacity: 1;
+}
+
+/* Effects */
+.dev-svg[data-phase='thinking'] .fx-bubble,
+.dev-svg[data-phase='error'] .fx-bug,
+.dev-svg[data-phase='error'] .fx-sweat,
+.dev-svg[data-phase='fixing'] .fx-bulb,
+.dev-svg[data-phase='success'] .fx-confetti {
+	opacity: 1;
+}
+
+.desk-mug {
+	transition: opacity .28s ease;
+}
+
+.dev-svg[data-phase='coffee'] .desk-mug {
+	opacity: 0;
+}
+
+/* Blink */
+.eye {
+	transform-box: fill-box !important;
+	transform-origin: center;
+	animation: blink 4.6s infinite;
+}
+
+@keyframes blink {
+	0%,
+	93%,
+	100% {
+		transform: scaleY(1);
+	}
+	95.5% {
+		transform: scaleY(.08);
+	}
+}
+
+/* Gaze */
+.pupils {
+	transform-box: fill-box !important;
+	transform-origin: center;
+	transition: transform .45s var(--ease);
+}
+
+.dev-svg[data-phase='typing'] .pupils,
+.dev-svg[data-phase='fixing'] .pupils {
+	transform: translate(0, 5px);
+}
+
+.dev-svg[data-phase='thinking'] .pupils {
+	transform: translate(-6px, -6px);
+}
+
+.dev-svg[data-phase='error'] .pupils {
+	transform: translate(0, 3px) scale(.92);
+}
+
+/* Brows */
+.brow {
+	transform-box: fill-box !important;
+	transform-origin: center;
+	transition: transform .4s var(--ease);
+}
+
+.dev-svg[data-phase='typing'] .brow,
+.dev-svg[data-phase='fixing'] .brow {
+	transform: translateY(2px);
+}
+
+.dev-svg[data-phase='thinking'] .brow-r {
+	transform: translateY(-7px) rotate(-6deg);
+}
+
+.dev-svg[data-phase='error'] .brow-l {
+	transform: translateY(-3px) rotate(-14deg);
+}
+
+.dev-svg[data-phase='error'] .brow-r {
+	transform: translateY(-3px) rotate(14deg);
+}
+
+.dev-svg[data-phase='success'] .brow {
+	transform: translateY(-5px);
+}
+
+/* Head pose + motion */
+.head {
+	transform-origin: 260px 240px;
+	transition: transform .55s var(--ease);
+}
+
+.dev-svg[data-phase='thinking'] .head {
+	transform: rotate(-5deg);
+}
+
+.dev-svg[data-phase='error'] .head {
+	transform: translateY(5px);
+}
+
+.dev-svg[data-phase='coffee'] .head {
+	transform: rotate(5deg) translateY(-2px);
+}
+
+.head-bob {
+	transform-origin: 260px 240px;
+}
+
+.dev-svg[data-phase='typing'] .head-bob,
+.dev-svg[data-phase='fixing'] .head-bob {
+	animation: head-bob 1.3s ease-in-out infinite;
+}
+
+.dev-svg[data-phase='success'] .head-bob {
+	animation: head-hop .5s ease-in-out infinite alternate;
+}
+
+@keyframes head-bob {
+	25% {
+		transform: rotate(1.4deg);
+	}
+	75% {
+		transform: rotate(-1.4deg);
+	}
+}
+
+@keyframes head-hop {
+	to {
+		transform: translateY(-5px);
+	}
+}
+
+.torso-breath {
+	transform-origin: 260px 436px;
+	animation: breathe 3.6s ease-in-out infinite;
+}
+
+@keyframes breathe {
+	50% {
+		transform: scale(1.012, 1.018);
+	}
+}
+
+/* Typing hands */
+.dev-svg[data-phase='typing'] .tap-a,
+.dev-svg[data-phase='fixing'] .tap-a {
+	animation: tap .2s ease-in-out infinite alternate;
+}
+
+.dev-svg[data-phase='typing'] .tap-b,
+.dev-svg[data-phase='fixing'] .tap-b {
+	animation: tap .2s ease-in-out -.1s infinite alternate;
+}
+
+.dev-svg[data-phase='fixing'] .tap-a,
+.dev-svg[data-phase='fixing'] .tap-b {
+	animation-duration: .14s;
+}
+
+@keyframes tap {
+	to {
+		transform: translateY(-3.5px);
+	}
+}
+
+/* Fist pump */
+.pump {
+	transform-origin: 336px 300px;
+	animation: pump .45s ease-in-out infinite alternate;
+}
+
+@keyframes pump {
+	from {
+		transform: rotate(4deg);
+	}
+	to {
+		transform: rotate(-5deg);
+	}
+}
+
+/* Coffee steam */
+.steam path {
+	stroke-dasharray: 22;
+	opacity: 0;
+	animation: steam 2.6s ease-in-out infinite;
+}
+
+.steam path:nth-child(2) {
+	animation-delay: .8s;
+}
+
+.steam path:nth-child(3) {
+	animation-delay: 1.6s;
+}
+
+@keyframes steam {
+	0% {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+	40% {
+		opacity: .45;
+	}
+	100% {
+		opacity: 0;
+		transform: translateY(-12px);
+	}
+}
+
+/* Plant sway */
+.leaves {
+	transform-origin: 92px 368px;
+	animation: sway 5s ease-in-out infinite;
+}
+
+@keyframes sway {
+	50% {
+		transform: rotate(3deg);
+	}
+}
+
+/* Rubber duck hops while debugging */
+.duck {
+	transform-origin: 392px 410px;
+	transition: transform .3s;
+}
+
+.dev-svg[data-phase='error'] .duck {
+	animation: duck .6s ease-in-out infinite alternate;
+}
+
+@keyframes duck {
+	to {
+		transform: translateY(-7px) rotate(-6deg);
+	}
+}
+
+/* Bug on the lid */
+.bug-walk {
+	animation: bug 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes bug {
+	from {
+		transform: translate(-40px, -10px);
+	}
+	to {
+		transform: translate(8px, 4px);
+	}
+}
+
+/* Sweat */
+.drop {
+	animation: drip 1.4s ease-in infinite;
+}
+
+@keyframes drip {
+	0% {
+		transform: translateY(-4px);
+		opacity: 0;
+	}
+	25% {
+		opacity: 1;
+	}
+	100% {
+		transform: translateY(14px);
+		opacity: 0;
+	}
+}
+
+/* Thought bubble */
+.bubble-dot,
+.bubble-main ellipse {
+	fill: #f2efe8;
+}
+
+.bubble-main text {
+	fill: #1a1a1f;
+	font-family: var(--font-mono);
+	font-size: 15px;
+	font-weight: 500;
+}
+
+.dev-svg[data-phase='thinking'] .bubble-dot,
+.dev-svg[data-phase='thinking'] .bubble-main {
+	animation: pop .4s var(--ease) both;
+}
+
+.dev-svg[data-phase='thinking'] .d2 {
+	animation-delay: .12s;
+}
+
+.dev-svg[data-phase='thinking'] .bubble-main {
+	transform-origin: 124px 46px;
+	animation-delay: .24s;
+}
+
+.bubble-dot {
+	transform-box: fill-box !important;
+	transform-origin: center;
+}
+
+@keyframes pop {
+	from {
+		opacity: 0;
+		transform: scale(.4);
+	}
+}
+
+/* Bulb */
+.bulb-pop {
+	transform-origin: 352px 50px;
+}
+
+.dev-svg[data-phase='fixing'] .bulb-pop {
+	animation: pop .45s var(--ease) both;
+}
+
+.bulb-glow {
+	animation: glow 1.2s ease-in-out infinite;
+}
+
+/* Confetti */
+.confetti {
+	transform-box: fill-box !important;
+	transform-origin: center;
+}
+
+.dev-svg[data-phase='success'] .confetti {
+	animation: burst 1.5s cubic-bezier(.15, .7, .3, 1) infinite;
+}
+
+.dev-svg[data-phase='success'] .confetti:nth-child(even) {
+	animation-delay: .2s;
+}
+
+@keyframes burst {
+	0% {
+		opacity: 1;
+		transform: translate(0, 0) rotate(0);
+	}
+	100% {
+		opacity: 0;
+		transform: translate(var(--dx), var(--dy)) rotate(var(--rot));
+	}
+}
+
+/* ───────── Responsive stage ───────── */
+
+@media (max-width: 1080px) {
+	.dev-scene {
+		justify-self: center;
+	}
+}
+
+@media (max-width: 620px) {
+	.dev-stage {
+		aspect-ratio: auto;
+		display: flex;
+		flex-direction: column;
+		padding-top: 44px;
+	}
+
+	.stage-character {
+		position: relative;
+		left: 0;
+		width: 100%;
+	}
+
+	.code-editor {
+		position: relative;
+		top: auto;
+		width: 100%;
+		margin-top: 10px;
+		font-size: 11px;
+	}
+
+	.stage-status {
+		top: 0;
+		left: 0;
+	}
+
+	.stage-chip {
+		display: none;
+	}
+
+	.stage-steps {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		row-gap: 14px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.stage-character,
+	.code-editor {
+		transform: none;
+	}
+}
