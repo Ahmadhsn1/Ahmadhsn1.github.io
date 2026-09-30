@@ -31,7 +31,8 @@ export function CountUp({value, duration = 1400}) {
 	const formatted = shown.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals})
 	const [before, after] = String(value).split(match[0])
 	return (
-		<span ref={ref} aria-label={value}>
+		<span ref={ref}>
+			<span className="sr-only">{value}</span>
 			<span aria-hidden="true">
 				{before}
 				{formatted}

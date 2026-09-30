@@ -41,6 +41,14 @@ export function HeroStage() {
 		return () => clearInterval(timer)
 	}, [reduceMotion, onScreen])
 
+	// Only reveal the portrait (and its masked lighting) once the image is decoded and paintable,
+	// so the lighting can never appear on its own as a silhouette.
+	const revealFigure = (image) => {
+		if (figureReady || !image?.naturalWidth) return
+		const show = () => setFigureReady(true)
+		image.decode ? image.decode().then(show, show) : show()
+	}
+
 	const move = (event) => {
 		if (reduceMotion) return
 		const bounds = event.currentTarget.getBoundingClientRect()
@@ -127,7 +135,7 @@ export function HeroStage() {
 				<div className="set-layer set-hero">
 					<div className={figureReady ? 'hero-figure is-ready' : 'hero-figure'}>
 						<span className="hero-contact" aria-hidden="true" />
-						<img src="/images/hero/ahmad-3d.webp" alt="Ahmad Hassan as a stylised 3D character in a denim jacket, standing in front of his coding setup" width="514" height="1522" decoding="async" fetchPriority="high" onLoad={() => setFigureReady(true)} ref={(node) => node?.complete && node.naturalWidth && !figureReady && setFigureReady(true)} />
+						<img src="/images/hero/ahmad-3d.webp" alt="Ahmad Hassan as a stylised 3D character in a denim jacket, standing in front of his coding setup" width="514" height="1522" decoding="async" fetchPriority="high" onLoad={(event) => revealFigure(event.currentTarget)} ref={(node) => node?.complete && revealFigure(node)} />
 						<span className="hero-light hero-light-key" aria-hidden="true" />
 						<span className="hero-light hero-light-shade" aria-hidden="true" />
 					</div>
