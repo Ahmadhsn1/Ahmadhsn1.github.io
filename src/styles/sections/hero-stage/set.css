@@ -513,6 +513,28 @@
 	animation: breathe 6s ease-in-out infinite;
 }
 
+.hero-figure img,
+.hero-light,
+.hero-contact {
+	opacity: 0;
+	transition: opacity .6s var(--ease);
+}
+
+/* Lighting overlays share the portrait's alpha as a mask; they only appear once the portrait
+   itself has decoded, so a slow connection never shows the lighting without the person. */
+.hero-figure.is-ready img,
+.hero-figure.is-ready .hero-contact {
+	opacity: 1;
+}
+
+.hero-figure.is-ready .hero-light-key {
+	opacity: .85;
+}
+
+.hero-figure.is-ready .hero-light-shade {
+	opacity: 1;
+}
+
 .hero-figure img {
 	position: relative;
 	display: block;
@@ -534,8 +556,7 @@
 .hero-light-key {
 	background: radial-gradient(70% 45% at 100% 30%, rgb(255 222 196 / 55%) 0%, transparent 70%), linear-gradient(90deg, transparent 50%, rgb(255 214 184 / 22%) 100%);
 	mix-blend-mode: soft-light;
-	opacity: .85;
-	transition: background 1s;
+	transition: background 1s, opacity .6s var(--ease);
 }
 
 /* The side turned away from the desk falls into shadow, and the legs darken toward the floor. */

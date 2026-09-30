@@ -19,6 +19,7 @@ export function HeroStage() {
 	const stageRef = useRef(null)
 	const [reduceMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
 	const [onScreen, setOnScreen] = useState(true)
+	const [figureReady, setFigureReady] = useState(false)
 	const [clock, setClock] = useState(() => (reduceMotion ? {index: RESTING_PHASE, t: 60000} : {index: 0, t: 0}))
 	const phase = storyPhases[clock.index]
 
@@ -124,9 +125,9 @@ export function HeroStage() {
 				</div>
 
 				<div className="set-layer set-hero">
-					<div className="hero-figure">
+					<div className={figureReady ? 'hero-figure is-ready' : 'hero-figure'}>
 						<span className="hero-contact" aria-hidden="true" />
-						<img src="/images/hero/ahmad-3d.webp" alt="Ahmad Hassan as a stylised 3D character in a denim jacket, standing in front of his coding setup" width="514" height="1522" decoding="async" fetchPriority="high" />
+						<img src="/images/hero/ahmad-3d.webp" alt="Ahmad Hassan as a stylised 3D character in a denim jacket, standing in front of his coding setup" width="514" height="1522" decoding="async" fetchPriority="high" onLoad={() => setFigureReady(true)} ref={(node) => node?.complete && node.naturalWidth && !figureReady && setFigureReady(true)} />
 						<span className="hero-light hero-light-key" aria-hidden="true" />
 						<span className="hero-light hero-light-shade" aria-hidden="true" />
 					</div>
