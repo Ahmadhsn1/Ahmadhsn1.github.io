@@ -1,0 +1,129 @@
+/* ───────── Decisions ───────── */
+
+.decisions {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	gap: 16px;
+	align-items: start;
+}
+
+.decision-list {
+	border-top: 1px solid var(--line);
+}
+
+.decision-list button {
+	display: flex;
+	align-items: baseline;
+	gap: 18px;
+	width: 100%;
+	padding: 16px 12px;
+	border: 0;
+	border-bottom: 1px solid var(--line);
+	background: none;
+	text-align: left;
+	font-size: clamp(16px, 1.45vw, 19px);
+	letter-spacing: -.015em;
+	color: var(--muted);
+	transition: color .3s, background .3s, padding .4s var(--ease);
+}
+
+.decision-list button:hover,
+.decision-list button.is-active {
+	color: var(--text);
+}
+
+.decision-list button.is-active {
+	padding-left: 20px;
+	background: linear-gradient(90deg, rgb(255 106 61 / 8%), transparent 70%);
+}
+
+.decision-index {
+	flex: none;
+	font-family: var(--font-mono);
+	font-size: 12px;
+	color: var(--muted);
+}
+
+.decision-list button.is-active .decision-index {
+	color: var(--ember);
+}
+
+.decision-panel {
+	--accent: var(--ember);
+	position: sticky;
+	top: 110px;
+	min-height: 420px;
+	overflow: hidden;
+	padding: clamp(28px, 4vw, 48px);
+	border: 1px solid var(--line-strong);
+	border-radius: var(--radius-lg);
+	background: radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 55%), linear-gradient(180deg, #141418, #0e0e11);
+	transition: background .6s;
+}
+
+.decision-panel-inner {
+	display: flex;
+	flex-direction: column;
+	min-height: 330px;
+	animation: rise .5s var(--ease) both;
+}
+
+.decision-big {
+	font-family: var(--font-serif);
+	font-style: italic;
+	font-size: 88px;
+	line-height: .8;
+	color: var(--accent);
+}
+
+.decision-panel h3 {
+	margin-top: 28px;
+	font-size: clamp(26px, 2.6vw, 36px);
+	font-weight: 500;
+	line-height: 1.1;
+	letter-spacing: -.035em;
+}
+
+.decision-panel p {
+	margin-top: 16px;
+	font-size: 16px;
+	color: var(--text-soft);
+}
+
+.decision-project {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 2px 12px;
+	margin-top: auto;
+	padding: 16px 18px;
+	border: 1px solid var(--line);
+	border-radius: 16px;
+	background: rgb(0 0 0 / 25%);
+	text-align: left;
+	transition: border-color .3s;
+}
+
+.decision-project:hover {
+	border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.decision-project span {
+	grid-column: 1 / -1;
+	font-family: var(--font-mono);
+	font-size: 11px;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+
+.decision-project strong {
+	font-weight: 500;
+}
+
+.decision-project em {
+	justify-self: end;
+	font-family: var(--font-body);
+	font-style: normal;
+	font-size: 14px;
+	color: var(--accent);
+}

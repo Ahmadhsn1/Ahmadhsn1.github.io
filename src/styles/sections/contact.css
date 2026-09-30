@@ -1,0 +1,125 @@
+/* ───────── Contact ───────── */
+
+.contact-section {
+	padding-block: clamp(96px, 12vw, 150px) 80px;
+}
+
+.contact-card {
+	position: relative;
+	display: grid;
+	grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+	gap: 48px;
+	align-items: end;
+	overflow: hidden;
+	padding: clamp(36px, 6vw, 80px);
+	border: 1px solid var(--line-strong);
+	border-radius: 36px;
+	background: linear-gradient(160deg, #16161a, #0d0d10 60%);
+	isolation: isolate;
+}
+
+.contact-glow {
+	position: absolute;
+	z-index: -1;
+	left: -20%;
+	bottom: -70%;
+	width: 80%;
+	aspect-ratio: 1;
+	border-radius: 50%;
+	background: radial-gradient(circle, rgb(255 106 61 / 40%), rgb(255 197 110 / 8%) 45%, transparent 70%);
+	filter: blur(40px);
+	animation: drift 16s ease-in-out infinite alternate;
+}
+
+.contact-card h2 {
+	font-size: clamp(40px, 5.2vw, 76px);
+	line-height: .98;
+}
+
+.contact-copy {
+	max-width: 440px;
+	margin-top: 24px;
+	font-size: 17px;
+	color: var(--text-soft);
+}
+
+.contact-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin-top: 32px;
+}
+
+.contact-meta {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-top: 28px;
+	font-size: 13.5px;
+	color: var(--muted);
+}
+
+.contact-meta time {
+	font-family: var(--font-mono);
+	color: var(--text-soft);
+}
+
+.contact-channels {
+	border-top: 1px solid var(--line);
+}
+
+.contact-channels a {
+	position: relative;
+	isolation: isolate;
+	display: grid;
+	grid-template-columns: 90px 1fr auto;
+	gap: 16px;
+	align-items: center;
+	padding: 18px 4px;
+	border-bottom: 1px solid var(--line);
+	transition: padding .4s var(--ease), background .3s;
+}
+
+.contact-channels a::before {
+	content: '';
+	position: absolute;
+	z-index: -1;
+	inset: 0;
+	background: linear-gradient(90deg, var(--ember-soft), transparent 80%);
+	transform: scaleX(0);
+	transform-origin: left;
+	transition: transform .55s var(--ease);
+}
+
+.contact-channels a:hover {
+	padding-inline: 14px;
+}
+
+.contact-channels a:hover::before {
+	transform: scaleX(1);
+}
+
+.channel-label {
+	font-family: var(--font-mono);
+	font-size: 12px;
+	letter-spacing: .04em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+
+.channel-value {
+	overflow: hidden;
+	font-size: 15.5px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.channel-arrow {
+	color: var(--muted);
+	transition: color .3s, transform .4s var(--ease);
+}
+
+.contact-channels a:hover .channel-arrow {
+	color: var(--ember);
+	transform: translate(3px, -3px);
+}

@@ -1,0 +1,186 @@
+/* ───────── Screen content ───────── */
+
+.monitor .code-editor {
+	--editor-scale: 1;
+	position: static;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	border: 0;
+	border-radius: 0;
+	background: #0e0e11;
+	box-shadow: none;
+	backdrop-filter: none;
+	transform: none;
+	font-family: var(--font-mono);
+	font-size: 1.05cqi;
+	line-height: 1.55;
+}
+
+.monitor .editor-code {
+	min-height: 0;
+	padding: .5em 0;
+}
+
+.monitor .editor-terminal {
+	min-height: 0;
+}
+
+.pipe-screen,
+.metrics-screen {
+	display: flex;
+	flex-direction: column;
+	gap: .6em;
+	height: 100%;
+	padding: .9em .8em;
+	font-family: var(--font-mono);
+	font-size: .92cqi;
+	color: var(--text-soft);
+	background: #0e0e11;
+}
+
+.pipe-title,
+.metrics-title {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin: 0;
+	font-size: .9em;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+
+.pipe-badge,
+.metrics-dot {
+	width: .7em;
+	height: .7em;
+	border-radius: 50%;
+	background: var(--gold);
+	box-shadow: 0 0 .8em currentColor;
+}
+
+.pipe-badge.is-ok,
+.metrics-dot {
+	background: var(--mint);
+}
+
+.pipe-badge.is-fail,
+.metrics-screen.is-alert .metrics-dot {
+	background: var(--danger);
+}
+
+.pipe-steps,
+.pipe-commits {
+	display: grid;
+	gap: .55em;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.pipe-steps li {
+	display: flex;
+	align-items: center;
+	gap: .6em;
+	padding: .35em .5em;
+	border-radius: .4em;
+	background: rgb(255 255 255 / 3%);
+}
+
+.pipe-icon {
+	display: grid;
+	place-items: center;
+	width: 1.3em;
+	height: 1.3em;
+	border-radius: 50%;
+	font-size: .85em;
+	background: rgb(255 255 255 / 6%);
+}
+
+.pipe-steps .is-ok .pipe-icon {
+	background: rgb(125 211 168 / 20%);
+	color: var(--mint);
+}
+
+.pipe-steps .is-fail {
+	background: rgb(255 93 93 / 12%);
+	color: #ffb3b3;
+}
+
+.pipe-steps .is-fail .pipe-icon {
+	background: rgb(255 93 93 / 25%);
+	color: var(--danger);
+}
+
+.pipe-steps .is-run .pipe-icon {
+	border: .15em solid rgb(255 197 110 / 30%);
+	border-top-color: var(--gold);
+	background: none;
+	animation: spin .9s linear infinite;
+}
+
+.pipe-steps .is-idle {
+	opacity: .45;
+}
+
+.pipe-commits li {
+	padding-left: .8em;
+	border-left: .15em solid var(--line-strong);
+	color: var(--muted);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.pipe-commits li:first-child {
+	border-color: var(--ember);
+	color: var(--text-soft);
+}
+
+.metrics-screen {
+	font-size: .8cqi;
+	padding: .8em;
+}
+
+.metrics-bars {
+	display: flex;
+	flex: 1;
+	align-items: flex-end;
+	gap: 5%;
+}
+
+.metrics-bars span {
+	flex: 1;
+	height: var(--h);
+	border-radius: .2em .2em 0 0;
+	background: linear-gradient(180deg, var(--mint), rgb(125 211 168 / 20%));
+	animation: bar 2.4s ease-in-out infinite alternate;
+	animation-delay: var(--d);
+	transform-origin: bottom;
+}
+
+.metrics-screen.is-alert .metrics-bars span:nth-last-child(-n + 3) {
+	background: linear-gradient(180deg, var(--danger), rgb(255 93 93 / 20%));
+}
+
+@keyframes bar {
+	to {
+		transform: scaleY(.72);
+	}
+}
+
+.metrics-line {
+	width: 100%;
+	height: 22%;
+	fill: none;
+	stroke: var(--ember);
+	stroke-width: 1.4;
+	vector-effect: non-scaling-stroke;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}

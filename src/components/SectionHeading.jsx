@@ -1,4 +1,4 @@
-import {SplitWords} from './SplitWords.jsx'
+import {SplitWords} from '@/components/SplitWords.jsx'
 
 export function SectionHeading({index, eyebrow, title, aside}) {
 	return (

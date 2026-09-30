@@ -1,13 +1,19 @@
 {
-  "name": "frontend-react",
+  "name": "ahmad-portfolio",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Personal portfolio of Ahmad Hassan, AI Systems Engineer.",
+  "author": "Ahmad Hassan <ahmad.hsn0099@gmail.com>",
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "preview": "vite preview",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "check": "eslint . && vite build"
   },
   "dependencies": {
     "react": "^19.2.8",

@@ -1,0 +1,59 @@
+/* ───────── Section heading ───────── */
+
+.work-section,
+.decisions-section,
+.build-section,
+.experience-section {
+	padding-block: clamp(96px, 12vw, 150px) 0;
+}
+
+.section-heading {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 40px;
+	margin-bottom: 44px;
+}
+
+.eyebrow {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 20px;
+	font-family: var(--font-mono);
+	font-size: 12px;
+	letter-spacing: .08em;
+	text-transform: uppercase;
+	color: var(--text-soft);
+}
+
+.eyebrow-index {
+	color: var(--ember);
+}
+
+.eyebrow-line {
+	width: 28px;
+	height: 1px;
+	background: var(--line-strong);
+}
+
+.section-heading h2,
+.contact-card h2 {
+	max-width: 940px;
+	font-size: clamp(34px, 4.6vw, 62px);
+	text-wrap: balance;
+	font-weight: 500;
+	line-height: 1.02;
+	letter-spacing: -.04em;
+}
+
+.section-heading h2 em,
+.contact-card h2 em {
+	font-size: 1.06em;
+}
+
+.section-aside {
+	max-width: 340px;
+	font-size: 15px;
+	color: var(--muted);
+}

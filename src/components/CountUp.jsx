@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react'
-import {useInView} from '../hooks/useInView.js'
+import {useInView} from '@/hooks/useInView.js'
 
 const NUMBER = /\d[\d,]*(\.\d+)?/
 

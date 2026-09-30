@@ -1,0 +1,133 @@
+/* ───────── Buttons & links ───────── */
+
+.btn {
+	--fill: var(--ember);
+	--fill-text: #0b0b0d;
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	padding: 14px 22px;
+	border: 1px solid transparent;
+	border-radius: 999px;
+	font-size: 15px;
+	font-weight: 500;
+	letter-spacing: -.01em;
+	transition: color .45s var(--ease), border-color .45s var(--ease), box-shadow .45s var(--ease);
+}
+
+/* Colour fill that sweeps in from the left and exits to the right. */
+.btn::before {
+	content: '';
+	position: absolute;
+	z-index: -1;
+	inset: -1px;
+	border-radius: inherit;
+	background: var(--fill);
+	transform: scaleX(0);
+	transform-origin: right center;
+	transition: transform .55s var(--ease);
+}
+
+.btn:hover::before,
+.btn:focus-visible::before {
+	transform: scaleX(1);
+	transform-origin: left center;
+}
+
+.btn:hover,
+.btn:focus-visible {
+	color: var(--fill-text);
+}
+
+/* Arrow slides out to the right and re-enters from the left. */
+.btn span[aria-hidden='true'] {
+	display: inline-block;
+}
+
+.btn:hover span[aria-hidden='true'],
+.btn:focus-visible span[aria-hidden='true'] {
+	animation: arrow-cycle .5s var(--ease);
+}
+
+@keyframes arrow-cycle {
+	45% {
+		opacity: 0;
+		transform: translateX(12px);
+	}
+	46% {
+		opacity: 0;
+		transform: translateX(-12px);
+	}
+	100% {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+.btn-primary {
+	background: var(--text);
+	color: #0b0b0d;
+	box-shadow: 0 10px 40px -12px rgb(255 106 61 / 55%);
+}
+
+.btn-primary:hover {
+	box-shadow: 0 18px 50px -12px rgb(255 106 61 / 85%);
+}
+
+.btn-ghost {
+	--fill: var(--text);
+	border-color: var(--line-strong);
+	background: var(--surface);
+	color: var(--text);
+}
+
+.btn-ghost:hover {
+	border-color: var(--text);
+}
+
+.text-link {
+	position: relative;
+	display: inline-flex;
+	gap: 8px;
+	padding: 0 0 3px;
+	border: 0;
+	background: linear-gradient(var(--line-strong), var(--line-strong)) bottom / 100% 1px no-repeat;
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--text);
+	transition: color .25s, border-color .25s;
+}
+
+.text-link::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 1px;
+	background: var(--ember);
+	transform: scaleX(0);
+	transform-origin: right;
+	transition: transform .5s var(--ease);
+}
+
+.text-link:hover {
+	color: var(--ember);
+}
+
+.text-link:hover::after {
+	transform: scaleX(1);
+	transform-origin: left;
+}
+
+.text-link span {
+	transition: transform .35s var(--ease);
+}
+
+.text-link:hover span {
+	transform: translateX(4px);
+}

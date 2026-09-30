@@ -1,10 +1,7 @@
 import {StrictMode} from 'react'
 import {createRoot} from 'react-dom/client'
-import './styles/tokens.css'
-import './styles/global.css'
-import './styles/portfolio.css'
-import './styles/hero-stage.css'
-import App from './App.jsx'
+import App from '@/app/App.jsx'
+import '@/styles/index.css'
 
 createRoot(document.getElementById('root')).render(
 	<StrictMode>

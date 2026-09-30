@@ -1,0 +1,46 @@
+/* ───────── Experience ───────── */
+
+.experience-list {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 16px;
+}
+
+.experience-list li {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	padding: 28px;
+	border: 1px solid var(--line);
+	border-radius: var(--radius-lg);
+	background: var(--surface);
+	transition: border-color .3s;
+}
+
+.experience-list li:hover {
+	border-color: var(--line-strong);
+}
+
+.experience-head h3 {
+	font-size: 22px;
+	font-weight: 500;
+	letter-spacing: -.025em;
+}
+
+.experience-head span {
+	font-family: var(--font-mono);
+	font-size: 12px;
+	letter-spacing: .04em;
+	text-transform: uppercase;
+	color: var(--ember);
+}
+
+.experience-list p {
+	font-size: 14.5px;
+	color: var(--text-soft);
+}
+
+.experience-list .text-link {
+	margin-top: auto;
+	align-self: flex-start;
+}

@@ -1,0 +1,86 @@
+/* ───────── Status & steps ───────── */
+
+.stage-status {
+	position: absolute;
+	z-index: 3;
+	top: 3%;
+	left: 2%;
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 14px 8px 8px;
+	border: 1px solid var(--line-strong);
+	border-radius: 999px;
+	background: rgb(17 17 20 / 80%);
+	backdrop-filter: blur(12px);
+	font-size: 13px;
+	font-weight: 500;
+	white-space: nowrap;
+	box-shadow: 0 12px 30px -12px rgb(0 0 0 / 70%);
+	animation: chip-in .5s var(--ease) both;
+}
+
+.status-icon {
+	display: grid;
+	place-items: center;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background: var(--ember-soft);
+	color: var(--ember);
+	font-size: 12px;
+}
+
+@keyframes chip-in {
+	from {
+		opacity: 0;
+		transform: translateY(6px) scale(.96);
+	}
+}
+
+.stage-steps {
+	display: grid;
+	grid-template-columns: repeat(6, minmax(0, 1fr));
+	gap: 8px;
+	margin-top: 18px;
+}
+
+.step {
+	display: grid;
+	gap: 8px;
+	padding: 0;
+	border: 0;
+	background: none;
+	text-align: left;
+	font-family: var(--font-mono);
+	font-size: 11px;
+	letter-spacing: .04em;
+	text-transform: uppercase;
+	color: var(--muted);
+	transition: color .3s;
+}
+
+.step:hover,
+.step.is-active {
+	color: var(--text);
+}
+
+.step-bar {
+	height: 2px;
+	border-radius: 2px;
+	background: var(--line-strong);
+	overflow: hidden;
+}
+
+.step-bar span {
+	display: block;
+	height: 100%;
+	background: var(--ember);
+}
+
+@media (max-width: 620px) {
+	.stage-steps {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		row-gap: 14px;
+	}
+}
