@@ -17,10 +17,10 @@ const PHASE_COLORS = {
 // Arm poses for the character's right arm (screen left). The left arm mirrors y/z.
 // s = shoulder rotation, e = elbow rotation (radians, XYZ order).
 const ARM_POSES = {
-	type: {s: [-0.42, 0.1, 0.2], e: [-1.05, 0, 0]},
-	chin: {s: [-1.05, 0.25, 0.42], e: [-2.35, 0.1, -0.35]},
-	mug: {s: [-1.0, 0.25, 0.4], e: [-2.3, 0.1, -0.35]},
-	fist: {s: [0.1, 0, 2.35], e: [0, 0, -1.2]},
+	type: {s: [-0.7, -0.07, -0.15], e: [0.25, -0.42, 1.02]},
+	chin: {s: [-0.99, -0.4, 0.62], e: [-0.59, -0.64, 1.27]},
+	mug: {s: [-0.9, -0.52, 1.38], e: [-0.53, -0.52, 0.1]},
+	fist: {s: [-1.62, 0.95, -1.33], e: [-0.3, -0.04, -0.34]},
 }
 
 const HEAD_POSES = {
@@ -41,6 +41,8 @@ const GAZE = {
 	coffee: [0, 0],
 }
 
+if (import.meta.env.DEV) window.__dev3d = {ARM_POSES, HEAD_POSES}
+
 const armPose = (side, phase) => {
 	if (side === 'right') return phase === 'thinking' ? ARM_POSES.chin : ARM_POSES.type
 	if (phase === 'coffee') return ARM_POSES.mug
@@ -60,11 +62,12 @@ function useMaterials() {
 		return {
 			skin: phys('#f5c09b', {roughness: 0.52, sheen: 0.6, sheenColor: new THREE.Color('#ff9f84'), sheenRoughness: 0.5}),
 			skinShade: phys('#eaa987', {roughness: 0.55, sheen: 0.4, sheenColor: new THREE.Color('#ff9f84')}),
-			hair: phys('#6a3b1d', {roughness: 0.45, clearcoat: 0.3, clearcoatRoughness: 0.5}),
-			hairLight: phys('#8c5630', {roughness: 0.45, clearcoat: 0.3}),
+			hair: phys('#4e2c17', {roughness: 0.5, clearcoat: 0.15, clearcoatRoughness: 0.6, sheen: 0.5, sheenColor: new THREE.Color('#a8703f')}),
+			hairLight: phys('#6b3e20', {roughness: 0.5, clearcoat: 0.15, sheen: 0.5, sheenColor: new THREE.Color('#b27a45')}),
 			shirt: std('#f6f7fa', {roughness: 0.78}),
 			shirtShade: std('#e1e5ec', {roughness: 0.8}),
 			jeans: std('#3a5a8c', {roughness: 0.85}),
+			shoe: phys('#6b4228', {roughness: 0.35, clearcoat: 0.6}),
 			eyeWhite: phys('#ffffff', {roughness: 0.06, clearcoat: 1}),
 			iris: phys('#4d7fb2', {roughness: 0.15, clearcoat: 1}),
 			pupil: phys('#0a0e16', {roughness: 0.05, clearcoat: 1}),
@@ -73,9 +76,9 @@ function useMaterials() {
 			mouth: std('#6e2620', {roughness: 0.6}),
 			teeth: std('#ffffff', {roughness: 0.3}),
 			tongue: std('#ff7f7f', {roughness: 0.5}),
-			blush: new THREE.MeshBasicMaterial({color: '#ff8d8d', transparent: true, opacity: 0.28, depthWrite: false}),
+			blush: new THREE.MeshBasicMaterial({color: '#ff8d8d', transparent: true, opacity: 0.16, depthWrite: false}),
 			chair: std('#232328', {roughness: 0.55}),
-			wood: phys('#7b5438', {roughness: 0.5, clearcoat: 0.4, clearcoatRoughness: 0.4}),
+			wood: phys('#4a3223', {roughness: 0.6, clearcoat: 0.2, clearcoatRoughness: 0.5}),
 			metal: std('#1c1c20', {roughness: 0.35, metalness: 0.7}),
 			alu: std('#34353c', {roughness: 0.3, metalness: 0.75}),
 			keys: std('#141417', {roughness: 0.6}),
@@ -91,7 +94,7 @@ function useMaterials() {
 			bugDark: std('#171012', {roughness: 0.5}),
 			sweat: phys('#a6dcff', {roughness: 0, transmission: 0.6, transparent: true, opacity: 0.85}),
 			bulb: new THREE.MeshBasicMaterial({color: '#ffd27a', toneMapped: false}),
-			steam: new THREE.MeshBasicMaterial({color: '#ffffff', transparent: true, opacity: 0.2, depthWrite: false}),
+			steam: new THREE.MeshBasicMaterial({color: '#ffffff', transparent: true, opacity: 0.12, depthWrite: false}),
 			bubble: std('#f2efe8', {roughness: 0.4}),
 		}
 	}, [])
@@ -124,12 +127,12 @@ function Arm({side, phase, mats, typing, children}) {
 	})
 
 	return (
-		<group ref={shoulder} position={[0.215 * -mirror, 1.07, 0]}>
+		<group ref={shoulder} name={`shoulder-${side}`} position={[0.215 * -mirror, 1.07, 0]}>
 			<Part material={mats.shirt} position={[0, -0.11, 0]} geometry={<capsuleGeometry args={[0.066, 0.15, 8, 20]} />} />
 			<Part material={mats.shirtShade} position={[0, -0.215, 0]} rotation={[Math.PI / 2, 0, 0]} geometry={<torusGeometry args={[0.058, 0.024, 12, 28]} />} />
-			<group ref={elbow} position={[0, -0.24, 0]}>
+			<group ref={elbow} name={`elbow-${side}`} position={[0, -0.24, 0]}>
 				<Part material={mats.skin} position={[0, -0.09, 0]} geometry={<capsuleGeometry args={[0.046, 0.13, 8, 20]} />} />
-				<group position={[0, -0.2, 0]}>
+				<group name={`hand-${side}`} position={[0, -0.2, 0]}>
 					<Part material={mats.skin} scale={[1, 0.8, 1.15]} geometry={<sphereGeometry args={[0.056, 32, 32]} />} />
 					<Part material={mats.skin} position={[0.035 * -mirror, 0.01, 0.03]} rotation={[0.4, 0, 0.5 * mirror]} geometry={<capsuleGeometry args={[0.017, 0.04, 6, 12]} />} />
 					{children}
@@ -139,7 +142,7 @@ function Arm({side, phase, mats, typing, children}) {
 	)
 }
 
-function Mug({mats, position, rotation, visible = true, steam = true}) {
+function Mug({mats, name, position, rotation, visible = true, steam = true}) {
 	const puffs = useRef([])
 	useFrame((state) => {
 		const t = state.clock.elapsedTime
@@ -148,12 +151,12 @@ function Mug({mats, position, rotation, visible = true, steam = true}) {
 			const p = (t * 0.5 + i / 3) % 1
 			puff.position.y = 0.08 + p * 0.16
 			puff.position.x = Math.sin(t * 2 + i * 2) * 0.012
-			puff.scale.setScalar(0.4 + p * 0.9)
-			puff.material.opacity = Math.sin(p * Math.PI) * 0.22
+			puff.scale.setScalar(0.25 + p * 0.5)
+			puff.material.opacity = Math.sin(p * Math.PI) * 0.12
 		})
 	})
 	return (
-		<group position={position} rotation={rotation} visible={visible}>
+		<group name={name} position={position} rotation={rotation} visible={visible}>
 			<Part material={mats.mug} geometry={<cylinderGeometry args={[0.052, 0.046, 0.11, 32]} />} />
 			<Part material={mats.coffee} position={[0, 0.052, 0]} geometry={<cylinderGeometry args={[0.046, 0.046, 0.004, 32]} />} />
 			<Part material={mats.mug} position={[0.058, 0, 0]} geometry={<torusGeometry args={[0.03, 0.01, 12, 24]} />} />
@@ -186,7 +189,7 @@ function Head({phase, mats, reduceMotion}) {
 		head.current.rotation.x = damp(head.current.rotation.x, hx - pointer.y * 0.08, 5, dt)
 		head.current.rotation.y = damp(head.current.rotation.y, hy + bob + pointer.x * 0.2, 5, dt)
 		head.current.rotation.z = damp(head.current.rotation.z, hz + bob * 0.4, 5, dt)
-		head.current.position.y = damp(head.current.position.y, 1.235 + hop, 10, dt)
+		head.current.position.y = damp(head.current.position.y, 1.205 + hop, 10, dt)
 
 		const [gx, gy] = GAZE[phase]
 		irises.current.forEach((iris) => {
@@ -218,7 +221,7 @@ function Head({phase, mats, reduceMotion}) {
 	const eyeX = 0.074
 
 	return (
-		<group ref={head} position={[0, 1.235, 0.01]}>
+		<group ref={head} position={[0, 1.205, 0.01]}>
 			<group position={[0, 0.17, 0]}>
 				<Part material={mats.skin} scale={[1, 1.04, 0.97]} geometry={<sphereGeometry args={[0.2, 64, 64]} />} />
 				<Part material={mats.skin} position={[0, -0.075, 0.035]} scale={[1.02, 0.82, 0.95]} geometry={<sphereGeometry args={[0.16, 48, 48]} />} />
@@ -234,10 +237,9 @@ function Head({phase, mats, reduceMotion}) {
 				{/* hair */}
 				<Part material={mats.hair} position={[0, 0.02, -0.02]} rotation={[-0.55, 0, 0]} scale={[1.04, 1.08, 1.04]} geometry={<sphereGeometry args={[0.2, 64, 32, 0, Math.PI * 2, 0, Math.PI * 0.52]} />} />
 				<Part material={mats.hair} position={[0, -0.005, -0.065]} scale={[1.02, 1, 0.88]} geometry={<sphereGeometry args={[0.19, 48, 48]} />} />
-				<Part material={mats.hair} position={[-0.035, 0.175, 0.07]} rotation={[-0.35, 0, 0.3]} scale={[1.35, 0.55, 0.95]} geometry={<sphereGeometry args={[0.1, 32, 32]} />} />
-				<Part material={mats.hairLight} position={[0.05, 0.205, 0.035]} rotation={[-0.2, 0, -0.35]} scale={[1.3, 0.62, 1]} geometry={<sphereGeometry args={[0.1, 32, 32]} />} />
-				<Part material={mats.hair} position={[0.13, 0.16, 0.05]} rotation={[0, 0, -0.6]} scale={[1, 0.6, 1]} geometry={<sphereGeometry args={[0.075, 24, 24]} />} />
-				<Part material={mats.hairLight} position={[0.0, 0.165, 0.125]} rotation={[-0.6, 0, -0.25]} scale={[1.5, 0.45, 0.7]} geometry={<sphereGeometry args={[0.07, 24, 24]} />} />
+				<Part material={mats.hair} position={[0.0, 0.165, 0.085]} rotation={[-0.35, 0, -0.22]} scale={[1.55, 0.72, 1.05]} geometry={<sphereGeometry args={[0.1, 48, 48]} />} />
+				<Part material={mats.hairLight} position={[0.07, 0.19, 0.05]} rotation={[-0.2, 0, -0.45]} scale={[1.2, 0.6, 1.05]} geometry={<sphereGeometry args={[0.095, 48, 48]} />} />
+				<Part material={mats.hair} position={[-0.1, 0.13, 0.08]} rotation={[-0.3, 0, 0.5]} scale={[1, 0.6, 0.9]} geometry={<sphereGeometry args={[0.075, 32, 32]} />} />
 				{[-1, 1].map((s) => (
 					<Part key={s} material={mats.hair} position={[0.188 * s, 0.03, 0.035]} rotation={[0, 0.35 * s, 0]} geometry={<boxGeometry args={[0.025, 0.08, 0.05]} />} />
 				))}
@@ -349,6 +351,7 @@ function Character({phase, mats, reduceMotion}) {
 				<group key={s}>
 					<Part material={mats.jeans} position={[0.1 * s, 0.56, 0.12]} rotation={[Math.PI / 2, 0, 0]} geometry={<capsuleGeometry args={[0.08, 0.26, 8, 20]} />} />
 					<Part material={mats.jeans} position={[0.1 * s, 0.34, 0.3]} geometry={<capsuleGeometry args={[0.07, 0.3, 8, 20]} />} />
+					<Part material={mats.shoe} position={[0.1 * s, 0.09, 0.34]} scale={[1, 0.65, 1.6]} geometry={<sphereGeometry args={[0.075, 32, 32]} />} />
 				</group>
 			))}
 
@@ -356,23 +359,23 @@ function Character({phase, mats, reduceMotion}) {
 				<Part material={mats.shirt} position={[0, 0.87, 0]} scale={[1.2, 1, 0.84]} geometry={<capsuleGeometry args={[0.19, 0.24, 12, 32]} />} />
 				{[-1, 1].map((s) => (
 					<group key={s}>
-						<Part material={mats.shirt} position={[0.19 * s, 1.05, 0]} geometry={<sphereGeometry args={[0.1, 32, 32]} />} />
+						<Part material={mats.shirt} position={[0.175 * s, 1.04, 0]} scale={[1, 0.85, 0.9]} geometry={<sphereGeometry args={[0.085, 32, 32]} />} />
 						<RoundedBox args={[0.085, 0.05, 0.018]} radius={0.008} position={[0.045 * s, 1.14, 0.125]} rotation={[-0.45, 0, -0.65 * s]} material={mats.shirt} castShadow />
 					</group>
 				))}
-				<Part material={mats.skin} position={[0, 1.115, 0.13]} scale={[0.9, 1.1, 0.4]} geometry={<sphereGeometry args={[0.045, 24, 24]} />} />
+				<Part material={mats.skinShade} position={[0, 1.125, 0.125]} scale={[0.75, 1, 0.35]} geometry={<sphereGeometry args={[0.04, 24, 24]} />} />
 				{[1.02, 0.94, 0.86].map((y) => (
 					<Part key={y} material={mats.shirtShade} position={[0, y, 0.16]} geometry={<sphereGeometry args={[0.009, 12, 12]} />} />
 				))}
 				<RoundedBox args={[0.08, 0.075, 0.01]} radius={0.004} position={[-0.1, 0.98, 0.153]} rotation={[0, -0.25, 0]} material={mats.shirtShade} />
-				<Part material={mats.skinShade} position={[0, 1.18, 0.01]} geometry={<cylinderGeometry args={[0.055, 0.06, 0.14, 24]} />} />
+				<Part material={mats.skinShade} position={[0, 1.16, 0.01]} geometry={<cylinderGeometry args={[0.055, 0.06, 0.12, 24]} />} />
 			</group>
 
 			<Head phase={phase} mats={mats} reduceMotion={reduceMotion} />
 
 			<Arm side="right" phase={phase} mats={mats} typing={typing} />
 			<Arm side="left" phase={phase} mats={mats} typing={typing}>
-				<Mug mats={mats} position={[-0.02, 0.02, 0.08]} rotation={[0, Math.PI, 0]} visible={phase === 'coffee'} steam={phase === 'coffee'} />
+				<Mug mats={mats} name="held-mug" position={[-0.02, 0.02, 0.08]} rotation={[0, Math.PI, 0]} visible={phase === 'coffee'} steam={phase === 'coffee'} />
 			</Arm>
 		</group>
 	)
@@ -389,7 +392,7 @@ function Laptop({phase, mats}) {
 	})
 
 	return (
-		<group position={[0, 0.77, 0.02]}>
+		<group name="laptop" position={[0, 0.77, -0.05]}>
 			<RoundedBox args={[0.46, 0.018, 0.31]} radius={0.008} material={mats.alu} castShadow receiveShadow />
 			<mesh material={mats.keys} position={[0, 0.0095, -0.02]} rotation={[-Math.PI / 2, 0, 0]}>
 				<planeGeometry args={[0.4, 0.17]} />
@@ -427,12 +430,12 @@ function Laptop({phase, mats}) {
 function Desk({mats}) {
 	return (
 		<group>
-			<RoundedBox args={[1.9, 0.05, 0.8]} radius={0.015} position={[0, 0.735, 0.2]} material={mats.wood} castShadow receiveShadow />
+			<RoundedBox args={[1.9, 0.05, 0.8]} radius={0.015} position={[0, 0.735, 0.18]} material={mats.wood} castShadow receiveShadow />
 			{[
-				[-0.88, -0.16],
-				[0.88, -0.16],
-				[-0.88, 0.56],
-				[0.88, 0.56],
+				[-0.88, -0.18],
+				[0.88, -0.18],
+				[-0.88, 0.54],
+				[0.88, 0.54],
 			].map(([x, z]) => (
 				<Part key={`${x}${z}`} material={mats.metal} position={[x, 0.36, z]} geometry={<cylinderGeometry args={[0.018, 0.018, 0.72, 16]} />} />
 			))}
@@ -493,7 +496,7 @@ function Effects({phase, mats, reduceMotion}) {
 			})),
 		[]
 	)
-	const confettiMats = useMemo(() => pieces.map((piece) => new THREE.MeshBasicMaterial({color: piece.color, side: THREE.DoubleSide})), [pieces])
+	const confettiMats = useMemo(() => pieces.map(({color}) => new THREE.MeshBasicMaterial({color, side: THREE.DoubleSide})), [pieces])
 
 	useEffect(() => {
 		started.current = -1
@@ -555,12 +558,15 @@ function Effects({phase, mats, reduceMotion}) {
 function Scene({phase, reduceMotion}) {
 	const mats = useMaterials()
 	const screenLight = useRef()
-	const {camera} = useThree()
+	const {camera, scene, size} = useThree()
+	const compact = size.width < 460
 	const target = useMemo(() => new THREE.Color(), [])
 
 	useEffect(() => {
-		camera.lookAt(0.02, 1.06, -0.1)
-	}, [camera])
+		camera.position.set(compact ? 0.4 : 0.85, 1.62, compact ? 3.1 : 2.95)
+		camera.lookAt(compact ? 0.02 : 0.44, compact ? 1.16 : 1.1, -0.12)
+		if (import.meta.env.DEV) window.__dev3d.scene = scene
+	}, [camera, scene, compact])
 
 	useFrame((_, dt) => {
 		target.set(PHASE_COLORS[phase])
@@ -573,9 +579,9 @@ function Scene({phase, reduceMotion}) {
 			<ambientLight intensity={0.35} />
 			<hemisphereLight args={['#ffeede', '#221812', 0.7]} />
 			<directionalLight position={[2.2, 4, 3]} intensity={2.4} castShadow shadow-mapSize={[1024, 1024]} shadow-bias={-0.0004} shadow-camera-left={-1.5} shadow-camera-right={1.5} shadow-camera-top={2} shadow-camera-bottom={-0.5} />
-			<directionalLight position={[-2.5, 2.4, -2.5]} intensity={3.2} color="#ff6a3d" />
+			<directionalLight position={[-2.5, 2.4, -2.5]} intensity={1.5} color="#ff8a5c" />
 			<directionalLight position={[-3, 1.2, 2]} intensity={0.5} color="#b9c8ff" />
-			<pointLight ref={screenLight} position={[0, 1.0, -0.05]} intensity={1.6} distance={1.1} decay={1.6} />
+			<pointLight ref={screenLight} position={[0, 1.3, -0.02]} intensity={0.5} distance={0.6} decay={2} />
 			<Environment resolution={256}>
 				<Lightformer intensity={2} position={[0, 3, 3]} scale={[5, 2, 1]} />
 				<Lightformer intensity={1.2} position={[-3, 1, 1]} rotation-y={Math.PI / 2} scale={[4, 2, 1]} />
@@ -595,7 +601,7 @@ function Scene({phase, reduceMotion}) {
 
 export default function Dev3D({phase, active, reduceMotion}) {
 	return (
-		<Canvas className="dev-canvas" shadows dpr={[1, 2]} frameloop={active ? 'always' : 'never'} camera={{position: [0.9, 1.55, 2.5], fov: 31}} gl={{antialias: true, alpha: true}}>
+		<Canvas className="dev-canvas" shadows dpr={[1, 2]} frameloop={active ? 'always' : 'never'} camera={{position: [0.85, 1.62, 2.95], fov: 30}} gl={{antialias: true, alpha: true}}>
 			<Scene phase={phase} reduceMotion={reduceMotion} />
 		</Canvas>
 	)

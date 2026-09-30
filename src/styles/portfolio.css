@@ -374,6 +374,7 @@ em {
 .hero-stats div {
 	display: flex;
 	flex-direction: column-reverse;
+	justify-content: flex-end;
 	gap: 6px;
 	padding: 20px 16px 0 0;
 }

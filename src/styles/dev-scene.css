@@ -958,6 +958,12 @@
 		display: none;
 	}
 
+	.stage-character.is-3d {
+		position: relative;
+		inset: auto;
+		aspect-ratio: 1;
+	}
+
 	.stage-steps {
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 		row-gap: 14px;
@@ -969,4 +975,43 @@
 	.code-editor {
 		transform: none;
 	}
+}
+
+/* ───────── 3D character ───────── */
+
+.stage-character.is-3d {
+	inset: 0;
+	left: 0;
+	width: 100%;
+	mask-image: radial-gradient(ellipse 78% 72% at 38% 52%, #000 64%, transparent 100%);
+}
+
+.dev-canvas,
+.dev-canvas-loading {
+	position: absolute !important;
+	inset: 0;
+}
+
+.dev-canvas-loading {
+	margin: auto;
+	width: 36px;
+	height: 36px;
+	border: 2px solid var(--line-strong);
+	border-top-color: var(--ember);
+	border-radius: 50%;
+	animation: spin .8s linear infinite;
+}
+
+.thought-bubble {
+	padding: 10px 16px;
+	border-radius: 999px;
+	background: #f2efe8;
+	color: #1a1a1f;
+	font-family: var(--font-mono);
+	font-size: 13px;
+	font-weight: 500;
+	white-space: nowrap;
+	box-shadow: 0 10px 30px -10px rgb(0 0 0 / 60%);
+	pointer-events: none;
+	animation: chip-in .4s var(--ease) both;
 }
