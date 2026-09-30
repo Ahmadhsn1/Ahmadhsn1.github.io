@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react'
+import {BackToTop} from './components/BackToTop.jsx'
 import {CaseStudy} from './components/CaseStudy.jsx'
 import {CommandPalette} from './components/CommandPalette.jsx'
 import {Contact} from './components/Contact.jsx'
@@ -47,6 +48,7 @@ export default function App() {
 				<Contact />
 			</main>
 			<Footer onPalette={() => setPaletteOpen(true)} />
+			<BackToTop />
 			<CaseStudy slug={slug} onOpen={open} onClose={close} />
 			<CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} onOpenCase={open} />
 		</ToastProvider>

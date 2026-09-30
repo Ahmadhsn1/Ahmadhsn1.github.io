@@ -1,4 +1,4 @@
-import {site} from '../data/site.js'
+import {site, whatsappUrl} from '../data/site.js'
 import {BrandMark} from './BrandMark.jsx'
 
 export function Footer({onPalette}) {
@@ -14,6 +14,9 @@ export function Footer({onPalette}) {
 				</a>
 				<nav className="footer-links" aria-label="Elsewhere">
 					<a href={`mailto:${site.email}`}>Email</a>
+					<a href={whatsappUrl(site.phone)} target="_blank" rel="noreferrer">
+						WhatsApp
+					</a>
 					<a href={site.linkedin} target="_blank" rel="noreferrer">
 						LinkedIn
 					</a>

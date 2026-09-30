@@ -1,5 +1,6 @@
 import {formatPhone, site, whatsappUrl} from '../data/site.js'
 import {LocalTime} from './LocalTime.jsx'
+import {SplitWords} from './SplitWords.jsx'
 import {useToast} from './Toast.jsx'
 
 export function Contact() {
@@ -32,9 +33,11 @@ export function Contact() {
 						Contact
 					</p>
 					<h2 id="contact-title">
-						Have a product
-						<br />
-						worth <em>shipping?</em>
+						<SplitWords>
+							Have a product
+							<br />
+							worth <em>shipping?</em>
+						</SplitWords>
 					</h2>
 					<p className="contact-copy">Open to AI and full-stack engineering roles — remote, from Lahore. Tell me what you’re building.</p>
 					<div className="contact-actions">

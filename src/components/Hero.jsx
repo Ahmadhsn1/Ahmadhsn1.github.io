@@ -3,6 +3,7 @@ import {stack} from '../data/profile.js'
 import {site} from '../data/site.js'
 import {CountUp} from './CountUp.jsx'
 import {DevScene} from './DevScene.jsx'
+import {SplitWords} from './SplitWords.jsx'
 
 const stats = [
 	{value: String(totals.projects), label: 'Products shipped'},
@@ -21,10 +22,12 @@ export function Hero() {
 					<p className="hero-kicker">
 						<span className="kicker-line" /> {site.roleLong}
 					</p>
-					<h1 id="hero-title">
-						I build AI products
-						<br />
-						that survive <em>real users.</em>
+					<h1 id="hero-title" className="is-visible">
+						<SplitWords>
+							I build AI products
+							<br />
+							that survive <em>real users.</em>
+						</SplitWords>
 					</h1>
 					<p className="hero-intro">
 						I’m <strong>{site.name}</strong>. Most LLM work stops at “it calls the model and runs on my machine.” Mine is engineered for the parts that break in production — token budgets, tenant isolation, revocation-aware sessions, and deploys that actually happen.

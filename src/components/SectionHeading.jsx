@@ -1,3 +1,5 @@
+import {SplitWords} from './SplitWords.jsx'
+
 export function SectionHeading({index, eyebrow, title, aside}) {
 	return (
 		<div className="section-heading" data-reveal>
@@ -7,7 +9,9 @@ export function SectionHeading({index, eyebrow, title, aside}) {
 					<span className="eyebrow-line" />
 					{eyebrow}
 				</p>
-				<h2>{title}</h2>
+				<h2>
+					<SplitWords>{title}</SplitWords>
+				</h2>
 			</div>
 			{aside && <p className="section-aside">{aside}</p>}
 		</div>

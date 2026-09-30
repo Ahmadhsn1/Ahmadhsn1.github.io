@@ -8,12 +8,12 @@ export const site = {
 	location: 'Lahore, Pakistan',
 	timeZone: 'Asia/Karachi',
 	email: 'ahmad.hsn0099@gmail.com',
-	phone: '',
+	phone: '+923256522522',
 	github: 'https://github.com/Ahmadhsn1',
 	githubHandle: 'Ahmadhsn1',
 	linkedin: 'https://www.linkedin.com/in/ahmad-hassan0099/',
 	linkedinHandle: 'ahmad-hassan0099',
 }
 
-export const formatPhone = (phone) => phone.replace(/^(\+\d{2})(\d{3})(\d+)$/, '$1 $2 $3')
+export const formatPhone = (phone) => phone.replace(/^(\+\d{2})(\d{3})(\d{3})(\d+)$/, '$1 $2 $3 $4')
 export const whatsappUrl = (phone) => `https://wa.me/${phone.replace(/\D/g, '')}`

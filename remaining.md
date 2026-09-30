@@ -26,7 +26,7 @@ Last updated: 2026-09-30
 
 ## ⏳ Remaining
 
-1. **Phone number:** put it in `site.phone` in `src/data/site.js` (e.g. `'+923001234567'`). Tap-to-call and WhatsApp then appear automatically in Contact and in the ⌘K palette.
+1. ~~Phone number~~ — added: +92 325 652 2522 (call + WhatsApp in Contact, footer and ⌘K).
 2. **Hero character redesign:** show design examples first; build only after one is approved.
 3. **Deploy:** Vercel or Netlify (`npm run build` → `dist/`). After deploying, make `og:image` an absolute URL.
 4. **Optional:** a real screenshot for RetailFlow (a logged-in demo view, taken by you) and the Aria widget (if it can be shared).
