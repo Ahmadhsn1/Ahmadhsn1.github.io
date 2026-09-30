@@ -40,10 +40,16 @@
 	transition: transform .6s var(--ease);
 }
 
+/* Wall and desk share one fixed-aspect canvas, cropped by the shorter room panel. */
+.set-room .set-layer {
+	inset: 0 0 auto;
+	aspect-ratio: 1 / .946;
+}
+
 /* The room: wall, shelf, neon and desk, clipped to a rounded frame. */
 .set-room {
 	position: absolute;
-	inset: 9% 0 0;
+	inset: 10% 0 21%;
 	overflow: hidden;
 	border: 1px solid var(--line-strong);
 	border-radius: 30px;
@@ -53,10 +59,12 @@
 
 .set-wall {
 	transform: translate3d(calc(var(--mx) * -5px), calc(var(--my) * -4px), 0);
+	filter: blur(1.6px) brightness(.92);
 }
 
 .set-desk {
 	transform: translate3d(calc(var(--mx) * -12px), calc(var(--my) * -8px), 0);
+	filter: blur(1px);
 }
 
 .set-hero {
@@ -77,7 +85,7 @@
 	top: 8%;
 	width: 70%;
 	height: 60%;
-	background: radial-gradient(closest-side, color-mix(in srgb, var(--screen) 24%, transparent), transparent);
+	background: radial-gradient(closest-side, color-mix(in srgb, var(--screen) 13%, transparent), transparent);
 	filter: blur(8px);
 	transition: background 1s;
 }
@@ -91,7 +99,7 @@
 	font-weight: 500;
 	letter-spacing: -.04em;
 	color: #ffd9c9;
-	text-shadow: 0 0 .15em #fff, 0 0 .4em var(--ember), 0 0 1.1em var(--ember), 0 0 2.4em rgb(255 106 61 / 60%);
+	text-shadow: 0 0 .12em #fff, 0 0 .35em var(--ember), 0 0 .9em rgb(255 106 61 / 60%);
 	animation: neon 7s infinite;
 }
 
@@ -199,10 +207,10 @@
 	left: 0;
 	right: 0;
 	top: 63%;
-	height: .5cqi;
-	background: linear-gradient(90deg, transparent, var(--ember) 18%, #ffb08e 55%, var(--ember) 85%, transparent);
-	box-shadow: 0 0 2cqi 0.6cqi rgb(255 106 61 / 45%), 0 -3cqi 8cqi 2cqi rgb(255 106 61 / 18%);
-	opacity: .85;
+	height: .25cqi;
+	background: linear-gradient(90deg, transparent, var(--ember) 22%, #ffb08e 55%, var(--ember) 80%, transparent);
+	box-shadow: 0 0 1.2cqi .2cqi rgb(255 106 61 / 35%), 0 -2cqi 6cqi 1cqi rgb(255 106 61 / 10%);
+	opacity: .6;
 }
 
 /* Desk and hardware */
@@ -248,7 +256,7 @@
 	padding: .55cqi;
 	border-radius: 1.1cqi;
 	background: linear-gradient(180deg, #202026, #0c0c0f);
-	box-shadow: 0 0 0 1px rgb(255 255 255 / 7%), 0 2cqi 5cqi rgb(0 0 0 / 70%), 0 0 7cqi -1cqi color-mix(in srgb, var(--screen) 55%, transparent);
+	box-shadow: 0 0 0 1px rgb(255 255 255 / 7%), 0 2cqi 5cqi rgb(0 0 0 / 70%), 0 0 5cqi -2cqi color-mix(in srgb, var(--screen) 32%, transparent);
 	transition: box-shadow 1s;
 }
 
@@ -375,7 +383,7 @@
 	height: 1.7%;
 	border-radius: .4cqi;
 	background: repeating-linear-gradient(90deg, #26262c 0 .9cqi, #17171b .9cqi 1.05cqi), #1b1b20;
-	box-shadow: 0 .6cqi 2.4cqi color-mix(in srgb, var(--screen) 60%, transparent), 0 .2cqi 0 #0a0a0c;
+	box-shadow: 0 .5cqi 1.6cqi color-mix(in srgb, var(--screen) 35%, transparent), 0 .2cqi 0 #0a0a0c;
 	transition: box-shadow 1s;
 }
 
@@ -491,33 +499,77 @@
 	background: radial-gradient(120% 80% at 50% 30%, transparent 55%, rgb(0 0 0 / 55%));
 }
 
-/* The portrait: stands in front of the desk, head breaking out of the frame. */
+/* The portrait: lit by the room rather than outlined, grounded with a contact shadow.
+   Light and shade overlays are masked to his exact silhouette, so nothing spills past his edges. */
 .hero-figure {
+	--figure: url('/hero/ahmad-3d.webp');
 	position: absolute;
-	left: 5%;
+	left: 6%;
 	bottom: 1.5%;
-	width: auto;
-	height: 97%;
-	max-width: none;
-	filter: drop-shadow(-.5cqi 0 1.4cqi rgb(140 170 255 / 22%)) drop-shadow(.8cqi 0 2cqi rgb(255 106 61 / 32%)) drop-shadow(0 3cqi 3cqi rgb(0 0 0 / 55%));
+	height: 96%;
+	aspect-ratio: 514 / 1522;
 	transform-origin: 50% 100%;
-	animation: breathe 5.5s ease-in-out infinite;
+	animation: breathe 6s ease-in-out infinite;
+}
+
+.hero-figure img {
+	position: relative;
+	display: block;
+	width: 100%;
+	height: 100%;
+	max-width: none;
+	filter: brightness(.93) contrast(1.04) saturate(.94) sepia(.06);
+}
+
+.hero-light {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	-webkit-mask: var(--figure) center / 100% 100% no-repeat;
+	mask: var(--figure) center / 100% 100% no-repeat;
+}
+
+/* Warm spill from the monitors on his right, strongest at the shoulder and fading down. */
+.hero-light-key {
+	background: radial-gradient(70% 45% at 100% 30%, rgb(255 222 196 / 55%) 0%, transparent 70%), linear-gradient(90deg, transparent 50%, rgb(255 214 184 / 22%) 100%);
+	mix-blend-mode: soft-light;
+	opacity: .85;
+	transition: background 1s;
+}
+
+/* The side turned away from the desk falls into shadow, and the legs darken toward the floor. */
+.hero-light-shade {
+	background: linear-gradient(90deg, rgb(8 8 12 / 55%) 0%, transparent 42%), linear-gradient(180deg, transparent 55%, rgb(8 8 12 / 35%) 100%);
+	mix-blend-mode: multiply;
+}
+
+.hero-contact {
+	position: absolute;
+	left: 2%;
+	right: -4%;
+	bottom: -1.2%;
+	height: 4.5%;
+	border-radius: 50%;
+	background: radial-gradient(50% 50% at 50% 50%, rgb(0 0 0 / 85%), rgb(0 0 0 / 40%) 45%, transparent 75%);
+	filter: blur(.4cqi);
+}
+
+.hero-contact::after {
+	content: '';
+	position: absolute;
+	left: -30%;
+	right: -30%;
+	top: -40%;
+	bottom: -60%;
+	border-radius: 50%;
+	background: radial-gradient(closest-side, rgb(0 0 0 / 45%), transparent);
+	filter: blur(1.2cqi);
 }
 
 @keyframes breathe {
 	50% {
-		transform: scale(1.004, 1.009);
+		transform: scale(1.003, 1.007);
 	}
-}
-
-.hero-floor {
-	position: absolute;
-	left: 3%;
-	bottom: 0;
-	width: 36%;
-	height: 4%;
-	border-radius: 50%;
-	background: radial-gradient(closest-side, rgb(0 0 0 / 75%), transparent);
 }
 
 /* Status chip over the room */

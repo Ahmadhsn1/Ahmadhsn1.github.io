@@ -124,8 +124,12 @@ export function HeroStage() {
 				</div>
 
 				<div className="set-layer set-hero">
-					<span className="hero-floor" aria-hidden="true" />
-					<img className="hero-figure" src="/hero/ahmad-3d.webp" alt="Ahmad Hassan as a stylised 3D character in a denim jacket, standing in front of his coding setup" width="514" height="1522" decoding="async" fetchPriority="high" />
+					<div className="hero-figure">
+						<span className="hero-contact" aria-hidden="true" />
+						<img src="/hero/ahmad-3d.webp" alt="Ahmad Hassan as a stylised 3D character in a denim jacket, standing in front of his coding setup" width="514" height="1522" decoding="async" fetchPriority="high" />
+						<span className="hero-light hero-light-key" aria-hidden="true" />
+						<span className="hero-light hero-light-shade" aria-hidden="true" />
+					</div>
 				</div>
 
 				<div className="stage-status" key={phase.id} aria-hidden="true">
