@@ -1,5 +1,7 @@
 # Ahmad Hassan — Portfolio
 
+**Live:** https://ahmadhsn1.github.io
+
 Personal site of **Ahmad Hassan**, AI Systems Engineer (full-stack · native Android), based in Lahore.
 
 Built with **React 19** and **Vite**, with no UI framework and no runtime dependencies beyond React. Every project, number and decision on the site comes from the source repos on [github.com/Ahmadhsn1](https://github.com/Ahmadhsn1).
@@ -76,6 +78,16 @@ The "Obsidian & Ember" tokens live in `src/styles/base/tokens.css`: near-black s
 - Animated layers are transform-only and GPU-composited, with no animated filters or blend modes.
 
 Lighthouse on the production build: **98** desktop, **87** mobile (simulated slow 4G, 4× CPU).
+
+## Deployment
+
+Every push to `main` runs `.github/workflows/deploy.yml`: `npm ci` → lint → build → publish `dist/` to **GitHub Pages**. Pull requests run the same lint and build but don't deploy.
+
+The public address lives in one place, `VITE_SITE_URL` in `.env`. Canonical and Open Graph tags, the sitemap and robots.txt are all generated from it. To move to a custom domain:
+
+1. Point the domain's DNS at GitHub Pages (a `CNAME` record to `ahmadhsn1.github.io`, or GitHub's `A` records for an apex domain).
+2. Set `VITE_SITE_URL=https://your-domain` and push. The build emits the `CNAME` file automatically.
+3. In repo **Settings → Pages**, confirm the domain and enable **Enforce HTTPS**.
 
 ## Roadmap
 

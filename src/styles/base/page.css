@@ -101,3 +101,28 @@ kbd {
 	font-size: 11px;
 	color: var(--text-soft);
 }
+
+.crash {
+	display: grid;
+	align-content: center;
+	justify-items: start;
+	gap: 20px;
+	min-height: 100svh;
+	width: min(100% - var(--gutter) * 2, 640px);
+	margin-inline: auto;
+}
+
+.crash h1 {
+	font-size: clamp(32px, 5vw, 48px);
+	font-weight: 500;
+	letter-spacing: -.03em;
+	line-height: 1.05;
+}
+
+.crash p:not(.eyebrow) {
+	color: var(--text-soft);
+}
+
+.crash a {
+	color: var(--ember);
+}

@@ -28,7 +28,7 @@ Last updated: 2026-09-30
 
 1. ~~Phone number~~ — added: +92 325 652 2522 (call + WhatsApp in Contact, footer and ⌘K).
 2. ~~Hero character~~ — done: the Option C character (cut out from the ChatGPT render) stands in front of a full coding setup (live code, CI, metrics). **Next:** a sharper, full-resolution export of the character image, and later a rigged 3D model (the T-pose route) if you want him to animate.
-3. **Deploy:** Vercel or Netlify (`npm run build` → `dist/`). After deploying, make `og:image` an absolute URL.
+3. ~~Deploy~~: done. Live on GitHub Pages at https://ahmadhsn1.github.io with automatic deploys. **Next:** optional custom domain (ahmadhassan.tech and ahmadhassan.io were available); see README → Deployment.
 4. **Optional:** a real screenshot for RetailFlow (a logged-in demo view, taken by you) and the Aria widget (if it can be shared).
 
 ## Run locally
