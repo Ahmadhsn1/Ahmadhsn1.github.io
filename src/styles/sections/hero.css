@@ -10,7 +10,7 @@
 }
 
 .hero-copy > :not(h1) {
-	animation: rise .9s var(--ease) both;
+	animation: rise .7s var(--ease) both;
 }
 
 .hero-copy > :nth-child(2) {
@@ -32,8 +32,7 @@
 @keyframes rise {
 	from {
 		opacity: 0;
-		transform: translateY(18px);
-		filter: blur(6px);
+		transform: translateY(14px);
 	}
 }
 

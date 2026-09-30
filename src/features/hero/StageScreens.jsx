@@ -1,3 +1,5 @@
+import {memo} from 'react'
+
 // Secondary screens on the hero desk. Both follow the same story phase as the main editor.
 
 const PIPELINE = ['lint', 'typecheck', 'test', 'build', 'deploy']
@@ -22,7 +24,7 @@ const commits = {
 
 const icon = {ok: '✓', fail: '✕', run: '', idle: '·'}
 
-export function PipelineScreen({phase}) {
+function PipelineView({phase}) {
 	const state = pipelineState[phase]
 	return (
 		<div className="pipe-screen" aria-hidden="true">
@@ -52,7 +54,7 @@ export function PipelineScreen({phase}) {
 
 const BARS = [38, 52, 44, 61, 57, 72, 66, 80, 74, 69, 83, 77, 88, 81]
 
-export function MetricsScreen({phase}) {
+function MetricsView({phase}) {
 	const failing = phase === 'error'
 	return (
 		<div className={failing ? 'metrics-screen is-alert' : 'metrics-screen'} aria-hidden="true">
@@ -71,3 +73,7 @@ export function MetricsScreen({phase}) {
 		</div>
 	)
 }
+
+// Both depend only on the phase, so they skip the hero's frequent typing re-renders.
+export const PipelineScreen = memo(PipelineView)
+export const MetricsScreen = memo(MetricsView)

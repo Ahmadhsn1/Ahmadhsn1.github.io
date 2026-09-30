@@ -2,6 +2,7 @@ import {useEffect, useRef, useState} from 'react'
 import {projects} from '@/content/projects.js'
 import {CountUp} from '@/components/CountUp.jsx'
 import {ProjectCover} from '@/features/work/ProjectCover.jsx'
+import {responsiveImage} from '@/lib/images.js'
 
 function Lightbox({items, index, onClose, onMove}) {
 	const item = items[index]
@@ -21,7 +22,7 @@ function Lightbox({items, index, onClose, onMove}) {
 	return (
 		<div className="lightbox" role="dialog" aria-modal="true" aria-label={item.caption} onClick={onClose}>
 			<figure onClick={(event) => event.stopPropagation()}>
-				<img src={item.src} alt={item.caption} className={item.tall ? 'is-tall' : undefined} />
+				<img {...responsiveImage(item.src)} sizes="100vw" alt={item.caption} className={item.tall ? 'is-tall' : undefined} />
 				<figcaption>
 					<span>
 						{index + 1} / {items.length}
@@ -50,22 +51,23 @@ export function CaseStudy({slug, onOpen, onClose}) {
 	const index = projects.findIndex((project) => project.slug === slug)
 	const project = projects[index]
 	const sheetRef = useRef(null)
-	const lastFocus = useRef(null)
 	const [shot, setShot] = useState(null)
+
+	// The sheet mounts on open and unmounts on close: lock scrolling for its lifetime
+	// and hand focus back to whatever opened it.
+	useEffect(() => {
+		const opener = document.activeElement
+		document.documentElement.classList.add('is-locked')
+		return () => {
+			document.documentElement.classList.remove('is-locked')
+			opener?.focus?.({preventScroll: true})
+		}
+	}, [])
 
 	useEffect(() => {
 		if (!project) return
-		lastFocus.current ??= document.activeElement
-		document.documentElement.classList.add('is-locked')
 		sheetRef.current?.scrollTo({top: 0})
 		sheetRef.current?.focus({preventScroll: true})
-		return () => document.documentElement.classList.remove('is-locked')
-	}, [project])
-
-	useEffect(() => {
-		if (project) return
-		lastFocus.current?.focus?.({preventScroll: true})
-		lastFocus.current = null
 	}, [project])
 
 	useEffect(() => {
@@ -204,7 +206,7 @@ export function CaseStudy({slug, onOpen, onClose}) {
 						<div className={project.gallery.some((item) => item.tall) ? 'case-gallery is-tall' : 'case-gallery'}>
 							{project.gallery.map((item, shotIndex) => (
 								<button type="button" key={item.src} onClick={() => setShot(shotIndex)}>
-									<img src={item.src} alt={item.caption} loading="lazy" decoding="async" />
+									<img {...responsiveImage(item.src)} sizes={item.tall ? '(max-width: 900px) 46vw, 240px' : '(max-width: 680px) 92vw, 520px'} alt={item.caption} loading="lazy" decoding="async" />
 									<span>{item.caption}</span>
 								</button>
 							))}

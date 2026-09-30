@@ -3,7 +3,7 @@ import {storyPhases} from '@/content/story.js'
 import {CodeEditor} from '@/features/hero/CodeEditor.jsx'
 import {MetricsScreen, PipelineScreen} from '@/features/hero/StageScreens.jsx'
 
-const TICK_MS = 50
+const TICK_MS = 80
 const RESTING_PHASE = storyPhases.findIndex((phase) => phase.id === 'success')
 const BOOKS = [
 	{h: 78, c: '#c9562f'},
@@ -142,7 +142,7 @@ export function HeroStage() {
 				{storyPhases.map((step, index) => (
 					<button key={step.id} type="button" className={index === clock.index ? 'step is-active' : 'step'} aria-pressed={index === clock.index} onClick={() => setClock({index, t: 0})}>
 						<span className="step-bar">
-							<span style={{width: index < clock.index ? '100%' : index === clock.index ? `${Math.min(100, (clock.t / step.duration) * 100)}%` : '0%'}} />
+							<span style={{transform: `scaleX(${index < clock.index ? 1 : index === clock.index ? Math.min(1, clock.t / step.duration).toFixed(3) : 0})`}} />
 						</span>
 						{step.short}
 					</button>

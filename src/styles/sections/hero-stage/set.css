@@ -38,6 +38,7 @@
 	position: absolute;
 	inset: 0;
 	transition: transform .6s var(--ease);
+	will-change: transform;
 }
 
 /* Wall and desk share one fixed-aspect canvas, cropped by the shorter room panel. */

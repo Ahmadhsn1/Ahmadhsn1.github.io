@@ -67,6 +67,16 @@ Imports use the `@/` alias for `src/` (configured in `vite.config.js` and `jscon
 
 The "Obsidian & Ember" tokens live in `src/styles/base/tokens.css`: near-black surfaces, warm ivory text and a single ember accent, set in Geist, Instrument Serif and Geist Mono. All motion respects `prefers-reduced-motion`.
 
+## Performance
+
+- Fonts are self-hosted (`@fontsource`), so there are no render-blocking third-party requests.
+- Project screenshots ship as responsive WebP (`800w`/`1600w`, or `400w` for phone screens) through `src/lib/images.js`.
+- The case study and command palette are code-split and prefetched when the browser is idle.
+- Scroll reveals use an IntersectionObserver, and scroll progress is written once per animation frame to the two elements that read it.
+- Animated layers are transform-only and GPU-composited, with no animated filters or blend modes.
+
+Lighthouse on the production build: **98** desktop, **87** mobile (simulated slow 4G, 4× CPU).
+
 ## Roadmap
 
 Open work is tracked in [`docs/ROADMAP.md`](docs/ROADMAP.md).
