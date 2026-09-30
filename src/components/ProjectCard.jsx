@@ -1,46 +1,40 @@
+import {ProjectCover} from './ProjectCover.jsx'
+
 const spotlight = (event) => {
 	const bounds = event.currentTarget.getBoundingClientRect()
 	event.currentTarget.style.setProperty('--mx', `${event.clientX - bounds.left}px`)
 	event.currentTarget.style.setProperty('--my', `${event.clientY - bounds.top}px`)
 }
 
-export function ProjectCard({project, index, featured}) {
+export function ProjectCard({project, index, featured, onOpen}) {
+	const number = String(index + 1).padStart(2, '0')
 	return (
-		<article className={featured ? 'project is-featured' : 'project'} data-reveal style={{'--reveal-delay': `${(index % 3) * 80}ms`}} onPointerMove={spotlight}>
+		<article className={featured ? 'project is-featured' : 'project'} style={{'--accent': project.accent, viewTransitionName: `card-${project.slug}`}} onPointerMove={spotlight} data-reveal>
+			<button type="button" className="project-hit" onClick={() => onOpen(project.slug)} aria-label={`Open the ${project.name} case study`} />
 			<div className="project-media">
-				<img src={project.image} alt={project.alt} loading="lazy" />
-				<span className="project-number">{project.number}</span>
-				<span className="project-type">{project.categories.join(' · ')}</span>
+				<ProjectCover project={project} />
+				<span className="project-number">{number}</span>
+				<span className="project-open" aria-hidden="true">
+					Case study <span>→</span>
+				</span>
 			</div>
 			<div className="project-body">
-				<div className="project-meta">
-					<h3>{project.name}</h3>
-					<span>{project.type}</span>
-				</div>
-				<p className="project-role">{project.role}</p>
-				<p className="project-description">{project.description}</p>
-				<ul className="project-highlights">
-					{project.highlights.map((highlight) => (
-						<li key={highlight}>{highlight}</li>
-					))}
-				</ul>
-				<div className="project-foot">
-					<div className="project-stack" aria-label="Technologies">
-						{project.stack.map((technology) => (
-							<span key={technology}>{technology}</span>
-						))}
-					</div>
-					{project.links.length > 0 && (
-						<div className="project-links" aria-label={`${project.name} links`}>
-							{project.links.map((link) => (
-								<a key={link.url} href={link.url} target="_blank" rel="noreferrer">
-									{link.label}
-									<span aria-hidden="true">↗</span>
-								</a>
-							))}
+				<p className="project-type">{project.type}</p>
+				<h3>{project.name}</h3>
+				<p className="project-tagline">{project.tagline}</p>
+				<dl className="project-metrics">
+					{project.metrics.slice(0, featured ? 4 : 2).map((metric) => (
+						<div key={metric.label}>
+							<dt>{metric.label}</dt>
+							<dd>{metric.value}</dd>
 						</div>
-					)}
-				</div>
+					))}
+				</dl>
+				<p className="project-tags">
+					{project.categories.map((category) => (
+						<span key={category}>{category}</span>
+					))}
+				</p>
 			</div>
 		</article>
 	)

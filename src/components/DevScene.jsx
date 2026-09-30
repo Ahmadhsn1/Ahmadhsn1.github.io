@@ -1,26 +1,14 @@
-import {Suspense, lazy, memo, useEffect, useRef, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import {storyPhases} from '../data/devStory.js'
 import {CodeEditor} from './CodeEditor.jsx'
 import {DevCharacter} from './DevCharacter.jsx'
 
-const Dev3D = memo(lazy(() => import('./three/Dev3D.jsx')))
-
 const TICK_MS = 50
 const RESTING_PHASE = storyPhases.findIndex((phase) => phase.id === 'success')
-
-const supportsWebGL = () => {
-	try {
-		const canvas = document.createElement('canvas')
-		return Boolean(canvas.getContext('webgl2') || canvas.getContext('webgl'))
-	} catch {
-		return false
-	}
-}
 
 export function DevScene() {
 	const stageRef = useRef(null)
 	const [reduceMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
-	const [use3D] = useState(supportsWebGL)
 	const [onScreen, setOnScreen] = useState(true)
 	const [clock, setClock] = useState(() => (reduceMotion ? {index: RESTING_PHASE, t: 60000} : {index: 0, t: 0}))
 	const phase = storyPhases[clock.index]
@@ -68,14 +56,8 @@ export function DevScene() {
 					<span className="status-icon">{phase.icon}</span>
 					{phase.label}
 				</div>
-				<div className={use3D ? 'stage-character is-3d' : 'stage-character'}>
-					{use3D ? (
-						<Suspense fallback={<div className="dev-canvas-loading" />}>
-							<Dev3D phase={phase.id} active={onScreen} reduceMotion={reduceMotion} />
-						</Suspense>
-					) : (
-						<DevCharacter phase={phase.id} />
-					)}
+				<div className="stage-character">
+					<DevCharacter phase={phase.id} />
 				</div>
 				<CodeEditor phase={phase} t={clock.t} />
 				<span className="stage-chip chip-a" aria-hidden="true">

@@ -1,39 +1,35 @@
-# Portfolio Redesign: Remaining Work
+# Portfolio: Status & Remaining Work
 
-Last updated: 2026-09-29
+Last updated: 2026-09-30
 
 ## ✅ Done
 
-- **New color scheme, "Obsidian & Ember":** near-black `#09090B` background, ivory text `#F2EFE8`, ember orange `#FF6A3D` accent and gold `#FFC56E` highlights (`src/styles/tokens.css`).
-- **New fonts:** Geist (body), Instrument Serif italic (accent words) and Geist Mono (code and labels).
-- **Full redesign of every section:** glass nav, hero with stats, tech marquee, bento project grid with spotlight hover, new **Process** section, About with a toolbox, a large Contact CTA card, and the footer.
-- **2D animated SVG developer character** (`src/components/DevCharacter.jsx`). It runs a 6-step story: typing → thinking → bug → fix → tests pass → coffee + git push.
-- **Live code editor** synced with the character (`src/components/CodeEditor.jsx`): the code types itself, a bug gets highlighted, the fix is typed and the terminal shows the output.
-- Step buttons (Code / Think / Debug / Fix / Test / Ship), mouse parallax, reduced-motion support, and the animation pauses when off-screen.
-- `npm run lint` and `npm run build` both pass.
+### Content, all from GitHub
+- Every project re-read from its README on github.com/Ahmadhsn1. Numbers were updated where they have changed (FitMind **941 tests**, NoteMind **173 tests**, new repo names `notemind-ai` and `larder-concierge-ai`).
+- **Real screenshots** from the repos: Retrivo Vault, LeadForge AI, NoteMind, SpendSmart, FitTrack, The Copper Larder, MindScribe. EasyQuran uses a screenshot of easyquran.app.
+- Aria, FitMind (private repo) and RetailFlow (demo is behind a login) get **coded covers built from their real features**, clearly labelled as illustrations.
+- **Full case study for every project** (`#/work/<slug>`, shareable links): overview, "What it does", engineering decisions, stack, metrics, screenshot gallery with lightbox, links.
+- **"Decisions I'd defend in a review"**: the 10 engineering notes from the profile README, each linked to its project.
+- **"How I build"**: the 7 rules and the tech stack from the profile README.
+- **Experience**: EasyQuran (co-lead), Prime Coworking (Aria), open source.
+- **Contact**: email `ahmad.hsn0099@gmail.com` (with copy button), LinkedIn, GitHub, live Lahore time.
+
+### Branding
+- "Ah" monogram logo (`BrandMark.jsx`), `public/favicon.svg`, OG/Twitter share image `public/og.jpg`, and JSON-LD `Person` schema.
+- Title: "Ahmad Hassan — AI Systems Engineer".
+
+### Interactivity (no magnetic hover anywhere)
+- ⌘K / Ctrl+K command palette for projects, sections and contact actions.
+- Case-study sheet: ←/→ between projects, Esc to close, the back button works.
+- View Transitions animation on project filters, count-up stats, cursor spotlight on cards, scroll reveals, active-section nav indicator, copy-to-clipboard toast.
+- Removed the 3D character and its libraries (three.js etc.), which were rejected.
 
 ## ⏳ Remaining
 
-### 1. 3D character (in progress, not connected yet)
-- `src/components/three/Dev3D.jsx` is **written but not yet connected**. It's a Three.js / React Three Fiber character built from code with the same 6 actions.
-- Dependencies are already installed: `three`, `@react-three/fiber`, `@react-three/drei`.
-- Still to do:
-  - [ ] Lazy-load `Dev3D` in `src/components/DevScene.jsx` with `React.lazy` and `Suspense`. Pass `phase={phase.id}`, `active={onScreen}` and `reduceMotion`.
-  - [ ] Use the SVG `DevCharacter` as a fallback when WebGL isn't available.
-  - [ ] CSS: give `.stage-character` an `aspect-ratio: 1.12` in 3D mode, plus a `.dev-canvas` fill and a `.thought-bubble` style.
-  - [ ] Tune the camera, arm poses (`ARM_POSES`) and hair shape by looking at screenshots.
-  - [ ] Remove the unused `piece` variable (line ~546).
-- **Note:** a Pixar-quality look (exactly like the reference image) needs a real 3D model (GLB). The best route: generate a model from the reference image in Meshy.ai or Tripo3D, rig and animate it in Mixamo (typing, thinking, cheering, drinking), then load it with `useGLTF` and `useAnimations`.
-
-### 2. Polish
-- [ ] Mobile check (≤620px): stacked editor and character layout.
-- [ ] In the Coffee phase, move the held mug slightly left so it covers the mouth properly.
-- [ ] At a 1440×730 viewport, "quietly works" wraps onto 2 lines; check the headline size.
-- [ ] Project images come from Unsplash; replace them with real product screenshots.
-
-### 3. Deploy
-- [ ] Deploy to Vercel or Netlify (`npm run build` → `dist/`).
-- [ ] Add an OG image, favicon and meta tags.
+1. **Phone number:** put it in `site.phone` in `src/data/site.js` (e.g. `'+923001234567'`). Tap-to-call and WhatsApp then appear automatically in Contact and in the ⌘K palette.
+2. **Hero character redesign:** show design examples first; build only after one is approved.
+3. **Deploy:** Vercel or Netlify (`npm run build` → `dist/`). After deploying, make `og:image` an absolute URL.
+4. **Optional:** a real screenshot for RetailFlow (a logged-in demo view, taken by you) and the Aria widget (if it can be shared).
 
 ## Run locally
 
