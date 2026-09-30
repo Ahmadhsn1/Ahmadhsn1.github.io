@@ -2,7 +2,7 @@ import {totals} from '../data/projects.js'
 import {stack} from '../data/profile.js'
 import {site} from '../data/site.js'
 import {CountUp} from './CountUp.jsx'
-import {DevScene} from './DevScene.jsx'
+import {HeroStage} from './HeroStage.jsx'
 import {SplitWords} from './SplitWords.jsx'
 
 const stats = [
@@ -51,7 +51,7 @@ export function Hero() {
 						))}
 					</dl>
 				</div>
-				<DevScene />
+				<HeroStage />
 			</section>
 			<div className="marquee" aria-label="Technologies I ship with">
 				<div className="marquee-track">
