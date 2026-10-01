@@ -19,7 +19,7 @@ export function ProjectGrid({onOpen}) {
 		<section className="work-section page-shell" id="work" aria-labelledby="work-title">
 			<SectionHeading
 				index="01"
-				eyebrow="Selected work"
+				eyebrow="Selected projects by Ahmad Hassan"
 				title={
 					<span id="work-title">
 						Products built to <em>survive</em> real users.

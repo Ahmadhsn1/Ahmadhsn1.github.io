@@ -74,6 +74,18 @@ export function schemaFor(slug, builtOn) {
 					isPartOf: {'@id': ids.website()},
 				},
 				{
+					'@type': 'ItemList',
+					'@id': `${absoluteUrl('/')}#projects`,
+					name: `Projects by ${site.name}`,
+					numberOfItems: projects.length,
+					itemListElement: projects.map((project, index) => ({
+						'@type': 'ListItem',
+						position: index + 1,
+						url: absoluteUrl(`/work/${project.slug}/`),
+						name: project.name,
+					})),
+				},
+				{
 					'@type': 'FAQPage',
 					'@id': `${absoluteUrl('/')}#faq`,
 					mainEntity: faq.map((entry) => ({'@type': 'Question', name: entry.question, acceptedAnswer: {'@type': 'Answer', text: entry.answer}})),
@@ -83,6 +95,7 @@ export function schemaFor(slug, builtOn) {
 	}
 
 	const url = absoluteUrl(meta.path)
+	const repository = project.links.find((link) => link.url.startsWith('https://github.com/') && !link.url.includes('/releases'))
 	return {
 		'@context': 'https://schema.org',
 		'@graph': [
@@ -101,8 +114,9 @@ export function schemaFor(slug, builtOn) {
 				mainEntity: {'@id': `${url}#project`},
 			},
 			{
-				'@type': 'CreativeWork',
+				'@type': repository ? ['CreativeWork', 'SoftwareSourceCode'] : 'CreativeWork',
 				'@id': `${url}#project`,
+				...(repository ? {codeRepository: repository.url} : {}),
 				name: project.name,
 				headline: project.tagline,
 				description: project.summary,

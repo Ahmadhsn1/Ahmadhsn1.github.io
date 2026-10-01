@@ -15,6 +15,10 @@ export const faq = [
 		answer: `Yes. He is based in ${site.city}, ${site.country}, and is open to engineering roles and project work, both locally and remotely. The fastest way to reach him is by email or WhatsApp.`,
 	},
 	{
+		question: 'What are Ahmad Hassan’s best-known projects?',
+		answer: 'EasyQuran, a Quran study app used by more than 10,000 families; Retrivo Vault, a RAG research assistant that cites its sources; LeadForge AI, an AI sales-intelligence platform with 198 automated checks; RetailFlow, a multi-tenant retail SaaS with 231 tests; NoteMind, an AI knowledge platform with 173 tests; and Aria, an AI booking assistant built at Prime Coworking.',
+	},
+	{
 		question: 'Which technologies does he work with?',
 		answer: 'TypeScript, React, Next.js, Node.js, NestJS, Python and Flask on the web and backend side; PostgreSQL, MongoDB, Supabase, Redis and Firestore for data; Kotlin, Java and Jetpack Compose for Android; and Google Gemini, vector search and LangChain for AI.',
 	},
