@@ -42,6 +42,7 @@ const website = () => ({
 	'@id': ids.website(),
 	url: absoluteUrl('/'),
 	name: site.name,
+	alternateName: [`${site.name} Portfolio`, site.githubHandle],
 	description: site.headline,
 	inLanguage: 'en',
 	publisher: {'@id': ids.person()},
