@@ -1,6 +1,7 @@
 import {useEffect, useState, useSyncExternalStore} from 'react'
 import {site} from '@/content/site.js'
 import {BrandMark} from '@/components/BrandMark.jsx'
+import {SiteLink} from '@/components/SiteLink.jsx'
 
 const links = [
 	{id: 'work', label: 'Work'},
@@ -45,18 +46,18 @@ export function Header({onPalette, homeMounted}) {
 	return (
 		<header className={scrolled ? 'site-header is-scrolled' : 'site-header'}>
 			<div className="header-bar">
-				<a className="brand" href="/" onClick={closeMenu} aria-label={`${site.name}, home`}>
+				<SiteLink className="brand" to="/" onClick={closeMenu} aria-label={`${site.name}, home`}>
 					<BrandMark />
 					<span className="brand-text">
 						<span className="brand-name">{site.name}</span>
 						<span className="brand-role">{site.role}</span>
 					</span>
-				</a>
+				</SiteLink>
 				<nav id="primary-navigation" className={menuOpen ? 'site-nav is-open' : 'site-nav'} aria-label="Main navigation">
 					{links.map((link) => (
-						<a key={link.id} href={`/#${link.id}`} onClick={closeMenu} aria-current={current === link.id ? 'true' : undefined}>
+						<SiteLink key={link.id} to={`/#${link.id}`} onClick={closeMenu} aria-current={current === link.id ? 'true' : undefined}>
 							{link.label}
-						</a>
+						</SiteLink>
 					))}
 				</nav>
 				<div className="header-actions">
@@ -64,9 +65,9 @@ export function Header({onPalette, homeMounted}) {
 						<span>Search</span>
 						<kbd>⌘K</kbd>
 					</button>
-					<a className="nav-cta" href="/#contact" onClick={closeMenu}>
+					<SiteLink className="nav-cta" to="/#contact" onClick={closeMenu}>
 						<span className="pulse-dot" /> Hire me
-					</a>
+					</SiteLink>
 					<button
 						className="menu-toggle"
 						type="button"

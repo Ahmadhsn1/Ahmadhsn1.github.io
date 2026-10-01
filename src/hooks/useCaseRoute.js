@@ -35,6 +35,24 @@ const getServerSnapshot = () => (typeof window === 'undefined' ? serverSlug : re
 // True when this session pushed a history entry for the open case study, so closing can go back to it.
 let pushedByApp = false
 
+// Goes to the home page (or a section of it, e.g. '/#work') without reloading the page.
+// Used by the logo and the navigation: a plain link to the current URL would reload the site.
+export function navigateHome(to = '/') {
+	const hash = to.includes('#') ? to.slice(to.indexOf('#') + 1) : ''
+	const scrollToTarget = (attempt = 0) => {
+		if (!hash) return window.scrollTo({top: 0, behavior: 'smooth'})
+		const section = document.getElementById(hash)
+		// Opening the site straight on a case study mounts the sections a moment later.
+		if (section) section.scrollIntoView({behavior: 'smooth', block: 'start'})
+		else if (attempt < 8) setTimeout(() => scrollToTarget(attempt + 1), 80)
+	}
+	const sheetWasOpen = readSlug() !== null
+	pushedByApp = false
+	window.history.replaceState(null, '', to)
+	if (sheetWasOpen) emit()
+	window.requestAnimationFrame(() => scrollToTarget())
+}
+
 export function useCaseRoute() {
 	const slug = useSyncExternalStore(subscribe, readSlug, getServerSnapshot)
 

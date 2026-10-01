@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState} from 'react'
 import {projects} from '@/content/projects.js'
 import {CaseLink} from '@/components/CaseLink.jsx'
+import {SiteLink} from '@/components/SiteLink.jsx'
 import {CountUp} from '@/components/CountUp.jsx'
 import {ProjectCover} from '@/features/work/ProjectCover.jsx'
 import {responsiveImage} from '@/lib/images.js'
@@ -103,9 +104,9 @@ export function CaseStudy({slug, onOpen, onClose}) {
 			>
 				<header className="case-bar">
 					<nav className="case-crumb" aria-label="Breadcrumb">
-						<a href="/">Ahmad Hassan</a>
+						<SiteLink to="/">Ahmad Hassan</SiteLink>
 						<span aria-hidden="true">/</span>
-						<a href="/#work">Work</a>
+						<SiteLink to="/#work">Work</SiteLink>
 						<span aria-hidden="true">/</span>
 						<span aria-current="page">{project.name}</span>
 						<small>

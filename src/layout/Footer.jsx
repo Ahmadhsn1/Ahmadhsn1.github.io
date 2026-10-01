@@ -2,18 +2,19 @@ import {projects} from '@/content/projects.js'
 import {site, whatsappUrl} from '@/content/site.js'
 import {BrandMark} from '@/components/BrandMark.jsx'
 import {CaseLink} from '@/components/CaseLink.jsx'
+import {SiteLink} from '@/components/SiteLink.jsx'
 
 export function Footer({onPalette, onOpenCase}) {
 	return (
 		<footer className="site-footer">
 			<div className="footer-inner page-shell">
-				<a className="brand" href="/">
+				<SiteLink className="brand" to="/">
 					<BrandMark size={32} />
 					<span className="brand-text">
 						<span className="brand-name">{site.name}</span>
 						<span className="brand-role">{site.location}</span>
 					</span>
-				</a>
+				</SiteLink>
 				<nav className="footer-links" aria-label="Elsewhere">
 					<a href={`mailto:${site.email}`}>Email</a>
 					<a href={whatsappUrl(site.phone)} target="_blank" rel="noreferrer">
