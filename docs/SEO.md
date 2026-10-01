@@ -19,6 +19,13 @@ How this site is built to be found, and what still has to happen off-site. Last 
 - AI answers (Google AI Overviews, ChatGPT, Perplexity, Gemini) are built from the same index and from third-party mentions. Doing ordinary SEO well, plus having consistent facts about the same person across several sites, is the strategy. Google's own guidance says there is no special markup required.
 - Links are earned or created on profiles the owner controls. No paid links, link exchanges, networks or expired domains.
 
+## How the result looks in Google
+
+- **Site name.** On a `*.github.io` address Google falls back to "GitHub" as the site name until it has re-read the `WebSite` structured data (`name`, `alternateName`) and the `og:site_name` / `application-name` tags, which are all in place. It can take days to weeks to change. A custom domain removes the ambiguity entirely.
+- **Favicon.** Google needs a square icon whose size is a multiple of 48px, reachable from the home page: `favicon.ico`, `favicon-48.png` and `favicon-96.png` are linked in `index.html`. Until Google fetches it, a grey globe is shown.
+- **Title and description** come from `src/seo/meta.js`. Google may rewrite them to fit the query; keeping the title under about 60 characters and the description under about 155 gives the best chance they are used as written.
+- Changes only show after Google recrawls the page. Use Search Console → URL inspection → Request indexing (about 10 requests per day).
+
 ## Keyword map (honest targets)
 
 | Target | Page | Realistic horizon |
