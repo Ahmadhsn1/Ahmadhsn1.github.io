@@ -5,7 +5,7 @@ export function HowIBuild() {
 	return (
 		<section className="build-section page-shell" id="stack" aria-labelledby="build-title">
 			<SectionHeading
-				index="03"
+				index="04"
 				eyebrow="How I build"
 				title={
 					<span id="build-title">

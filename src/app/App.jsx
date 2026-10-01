@@ -9,9 +9,12 @@ import {ScrollEffects} from '@/layout/ScrollEffects.jsx'
 import {Contact} from '@/features/contact/Contact.jsx'
 import {Decisions} from '@/features/decisions/Decisions.jsx'
 import {Experience} from '@/features/experience/Experience.jsx'
+import {Faq} from '@/features/faq/Faq.jsx'
 import {Hero} from '@/features/hero/Hero.jsx'
 import {HowIBuild} from '@/features/how-i-build/HowIBuild.jsx'
+import {Services} from '@/features/services/Services.jsx'
 import {ProjectGrid} from '@/features/work/ProjectGrid.jsx'
+import {applyHead} from '@/seo/applyHead.js'
 
 // Rarely-opened overlays ship as separate chunks and are prefetched once the page is idle.
 const loadCaseStudy = () => import('@/features/work/CaseStudy.jsx')
@@ -22,6 +25,10 @@ const CommandPalette = lazy(() => loadCommandPalette().then((module) => ({defaul
 export default function App() {
 	const {slug, open, close} = useCaseRoute()
 	const [paletteOpen, setPaletteOpen] = useState(false)
+	// A case study URL is prerendered on its own, without the home sections behind it. They are
+	// added the first time the sheet closes (and stay mounted afterwards, so reopening is instant).
+	const [homeMounted, setHomeMounted] = useState(!slug)
+	if (!slug && !homeMounted) setHomeMounted(true)
 
 	useEffect(() => {
 		const onKey = (event) => {
@@ -43,20 +50,28 @@ export default function App() {
 		return () => (window.cancelIdleCallback ? window.cancelIdleCallback(idle) : clearTimeout(idle))
 	}, [])
 
+	useEffect(() => {
+		applyHead(slug)
+	}, [slug])
+
 	return (
 		<ToastProvider>
 			<Backdrop />
 			<ScrollEffects />
-			<Header onPalette={() => setPaletteOpen(true)} />
-			<main id="home" inert={slug ? true : undefined}>
-				<Hero />
-				<ProjectGrid onOpen={open} />
-				<Decisions onOpen={open} />
-				<HowIBuild />
-				<Experience onOpen={open} />
-				<Contact />
-			</main>
-			<Footer onPalette={() => setPaletteOpen(true)} />
+			<Header onPalette={() => setPaletteOpen(true)} homeMounted={homeMounted} />
+			{homeMounted && (
+				<main id="home" inert={slug ? true : undefined}>
+					<Hero />
+					<ProjectGrid onOpen={open} />
+					<Services onOpen={open} />
+					<Decisions onOpen={open} />
+					<HowIBuild />
+					<Experience onOpen={open} />
+					<Faq />
+					<Contact />
+				</main>
+			)}
+			<Footer onPalette={() => setPaletteOpen(true)} onOpenCase={open} />
 			<BackToTop />
 			<Suspense fallback={null}>
 				{slug && <CaseStudy slug={slug} onOpen={open} onClose={close} />}

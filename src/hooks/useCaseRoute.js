@@ -1,28 +1,62 @@
-import {useCallback, useEffect, useState} from 'react'
+import {useCallback, useSyncExternalStore} from 'react'
 
-const PREFIX = '#/work/'
-const readSlug = () => (window.location.hash.startsWith(PREFIX) ? decodeURIComponent(window.location.hash.slice(PREFIX.length)) : null)
+// Case studies have real URLs (/work/<slug>/) so each one can be indexed and shared.
+// Older shared links used #/work/<slug>, which are still understood.
+const matchSlug = (pathname) => {
+	const match = pathname.match(/^\/work\/([^/]+)\/?$/)
+	return match ? decodeURIComponent(match[1]) : null
+}
+const legacyHashSlug = () => {
+	const match = window.location.hash.match(/^#\/work\/([^/]+)/)
+	return match ? decodeURIComponent(match[1]) : null
+}
+const readSlug = () => matchSlug(window.location.pathname) ?? legacyHashSlug()
 
-// Case studies live at #/work/<slug> so they can be shared and the back button closes them.
+// The prerenderer sets the page being rendered, since there is no window on the server.
+let serverSlug = null
+export const setServerPath = (path) => {
+	serverSlug = matchSlug(path)
+}
+
+const listeners = new Set()
+const emit = () => listeners.forEach((listener) => listener())
+const subscribe = (listener) => {
+	listeners.add(listener)
+	window.addEventListener('popstate', listener)
+	window.addEventListener('hashchange', listener)
+	return () => {
+		listeners.delete(listener)
+		window.removeEventListener('popstate', listener)
+		window.removeEventListener('hashchange', listener)
+	}
+}
+const getServerSnapshot = () => (typeof window === 'undefined' ? serverSlug : readSlug())
+
+// True when this session pushed a history entry for the open case study, so closing can go back to it.
+let pushedByApp = false
+
 export function useCaseRoute() {
-	const [slug, setSlug] = useState(readSlug)
-
-	useEffect(() => {
-		const onHash = () => setSlug(readSlug())
-		window.addEventListener('hashchange', onHash)
-		return () => window.removeEventListener('hashchange', onHash)
-	}, [])
+	const slug = useSyncExternalStore(subscribe, readSlug, getServerSnapshot)
 
 	const open = useCallback((next) => {
-		const url = `${PREFIX}${next}`
+		const url = `/work/${next}/`
 		if (readSlug()) window.history.replaceState(null, '', url)
-		else window.history.pushState(null, '', url)
-		setSlug(next)
+		else {
+			window.history.pushState(null, '', url)
+			pushedByApp = true
+		}
+		emit()
 	}, [])
 
 	const close = useCallback(() => {
-		window.history.replaceState(null, '', '#work')
-		setSlug(null)
+		if (pushedByApp) {
+			pushedByApp = false
+			window.history.back()
+			return
+		}
+		window.history.replaceState(null, '', '/')
+		window.scrollTo(0, 0)
+		emit()
 	}, [])
 
 	return {slug, open, close}

@@ -16,6 +16,8 @@
 @import './sections/decisions.css';
 @import './sections/how-i-build.css';
 @import './sections/experience.css';
+@import './sections/services.css';
+@import './sections/faq.css';
 @import './sections/contact.css';
 @import './components/command-palette.css';
 @import './components/toast.css';

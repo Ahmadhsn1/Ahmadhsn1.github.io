@@ -1,4 +1,5 @@
 import {useEffect, useRef, useState} from 'react'
+import {usePrefersReducedMotion} from '@/hooks/usePrefersReducedMotion.js'
 import {storyPhases} from '@/content/story.js'
 import {CodeEditor} from '@/features/hero/CodeEditor.jsx'
 import {MetricsScreen, PipelineScreen} from '@/features/hero/StageScreens.jsx'
@@ -17,10 +18,13 @@ const BOOKS = [
 // Layers drift at different rates with the pointer to give the flat scene real depth.
 export function HeroStage() {
 	const stageRef = useRef(null)
-	const [reduceMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+	const reduceMotion = usePrefersReducedMotion()
 	const [onScreen, setOnScreen] = useState(true)
 	const [figureReady, setFigureReady] = useState(false)
-	const [clock, setClock] = useState(() => (reduceMotion ? {index: RESTING_PHASE, t: 60000} : {index: 0, t: 0}))
+	const [timeline, setClock] = useState({index: 0, t: 0})
+	const [picked, setPicked] = useState(false)
+	// With reduced motion the scene rests on the "tests passing" frame instead of playing the loop.
+	const clock = reduceMotion && !picked ? {index: RESTING_PHASE, t: 60000} : timeline
 	const phase = storyPhases[clock.index]
 
 	useEffect(() => {
@@ -158,7 +162,16 @@ export function HeroStage() {
 			<figcaption className="stage-steps">
 				<span className="sr-only">The workstation plays a short loop: code, think, debug, fix, test and ship. Jump to a step:</span>
 				{storyPhases.map((step, index) => (
-					<button key={step.id} type="button" className={index === clock.index ? 'step is-active' : 'step'} aria-pressed={index === clock.index} onClick={() => setClock({index, t: 0})}>
+					<button
+						key={step.id}
+						type="button"
+						className={index === clock.index ? 'step is-active' : 'step'}
+						aria-pressed={index === clock.index}
+						onClick={() => {
+							setPicked(true)
+							setClock({index, t: 0})
+						}}
+					>
 						<span className="step-bar">
 							<span style={{transform: `scaleX(${index < clock.index ? 1 : index === clock.index ? Math.min(1, clock.t / step.duration).toFixed(3) : 0})`}} />
 						</span>

@@ -1,3 +1,4 @@
+import {CaseLink} from '@/components/CaseLink.jsx'
 import {ProjectCover} from '@/features/work/ProjectCover.jsx'
 
 const spotlight = (event) => {
@@ -10,7 +11,9 @@ export function ProjectCard({project, index, featured, onOpen}) {
 	const number = String(index + 1).padStart(2, '0')
 	return (
 		<article className={featured ? 'project is-featured' : 'project'} style={{'--accent': project.accent, viewTransitionName: `card-${project.slug}`}} onPointerMove={spotlight} data-reveal>
-			<button type="button" className="project-hit" onClick={() => onOpen(project.slug)} aria-label={`Open the ${project.name} case study`} />
+			<CaseLink slug={project.slug} onOpen={onOpen} className="project-hit">
+				<span className="sr-only">{project.name} case study</span>
+			</CaseLink>
 			<div className="project-media">
 				<ProjectCover project={project} />
 				<span className="project-number">{number}</span>

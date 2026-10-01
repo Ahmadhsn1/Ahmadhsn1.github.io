@@ -23,16 +23,22 @@ Requires Node 20 or newer.
 ```
 src/
 ├─ main.jsx                 Entry: mounts <App /> and loads the stylesheet
+├─ entry-server.jsx         Server entry used at build time to prerender every page
 ├─ app/
-│  └─ App.jsx               Page composition, case-study routing, ⌘K shortcut
+│  ├─ App.jsx               Page composition, case-study routing, ⌘K shortcut
+│  └─ ErrorBoundary.jsx     Calm fallback with contact details if rendering ever fails
 ├─ content/                 Everything editable lives here, not in components
 │  ├─ site.js               Name, role, contact details, social links
 │  ├─ projects.js           All 11 projects: summary, metrics, features, decisions, gallery
 │  ├─ profile.js            Engineering decisions, principles, tech stack, experience
+│  ├─ services.js           What I build, tied to real case studies
+│  ├─ faq.js                Questions and plain-text answers (also feeds FAQ structured data)
 │  └─ story.js              The hero workstation loop (code → debug → ship)
 ├─ features/                One folder per page section
 │  ├─ hero/                 Hero copy and the workstation stage (editor, CI, metrics screens)
 │  ├─ work/                 Project grid, cards, coded covers and the case-study sheet
+│  ├─ services/             "What I build"
+│  ├─ faq/                  Questions and answers
 │  ├─ decisions/            "Decisions I'd defend in a review"
 │  ├─ how-i-build/          Principles and tool stack
 │  ├─ experience/           Roles and teams
@@ -40,7 +46,9 @@ src/
 │  └─ command-palette/      ⌘K / Ctrl+K search
 ├─ layout/                  Page chrome: header, footer, backdrop, back-to-top, scroll effects
 ├─ components/              Shared UI: brand mark, count-up, section heading, split words, toast
-├─ hooks/                   useInView, useCaseRoute
+├─ hooks/                   useInView, useCaseRoute, usePrefersReducedMotion
+├─ seo/                     Per-page titles, descriptions, JSON-LD graph and head updates
+├─ lib/                     Responsive image helper and generated size manifest
 └─ styles/
    ├─ index.css             Single entry; import order defines the cascade
    ├─ base/                 Design tokens, reset, page primitives
@@ -50,7 +58,11 @@ src/
    ├─ motion/               Scroll reveals, hover and scroll-driven effects, header motion
    └─ responsive.css        Breakpoint overrides
 
+scripts/
+└─ prerender.mjs            Writes every page's HTML, sitemap.xml, robots.txt, llms.txt, 404.html, CNAME
+
 public/
+├─ og/<slug>.jpg            Share card for each case study (1200×630)
 ├─ images/hero/             Hero portrait (transparent WebP)
 ├─ images/projects/<slug>/  Real screenshots from each project's repo
 ├─ favicon.svg
@@ -78,6 +90,17 @@ The "Obsidian & Ember" tokens live in `src/styles/base/tokens.css`: near-black s
 - Animated layers are transform-only and GPU-composited, with no animated filters or blend modes.
 
 Lighthouse on the production build: **98** desktop, **87** mobile (simulated slow 4G, 4× CPU).
+
+## Search and AI visibility
+
+The site is a React app, but every page is **prerendered to static HTML** at build time (`npm run build` → client build, server build, `scripts/prerender.mjs`). Search engines and AI crawlers that never run JavaScript still read the full content, and React hydrates the same markup in the browser.
+
+- Each case study has a real URL (`/work/<slug>/`) with its own title, description, canonical, share card and structured data.
+- Structured data (JSON-LD): `Person`, `ProfilePage`, `WebSite`, `FAQPage` on the home page; `WebPage`, `CreativeWork` and `BreadcrumbList` on each case study.
+- `sitemap.xml`, `robots.txt` and `llms.txt` are generated from the same content files.
+- After every deploy, CI pings IndexNow so Bing and other engines recrawl.
+
+The strategy, checklists and manual steps are in [`docs/SEO.md`](docs/SEO.md).
 
 ## Deployment
 

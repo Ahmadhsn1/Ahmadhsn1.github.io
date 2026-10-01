@@ -1,6 +1,7 @@
 import {useState} from 'react'
 import {decisions} from '@/content/profile.js'
 import {projects} from '@/content/projects.js'
+import {CaseLink} from '@/components/CaseLink.jsx'
 import {SectionHeading} from '@/components/SectionHeading.jsx'
 
 export function Decisions({onOpen}) {
@@ -11,7 +12,7 @@ export function Decisions({onOpen}) {
 	return (
 		<section className="decisions-section page-shell" id="decisions" aria-labelledby="decisions-title">
 			<SectionHeading
-				index="02"
+				index="03"
 				eyebrow="Engineering judgement"
 				title={
 					<span id="decisions-title">
@@ -45,11 +46,11 @@ export function Decisions({onOpen}) {
 						<span className="decision-big">{String(active + 1).padStart(2, '0')}</span>
 						<h3>{decision.title}</h3>
 						<p>{decision.text}</p>
-						<button type="button" className="decision-project" onClick={() => onOpen(project.slug)}>
+						<CaseLink slug={project.slug} onOpen={onOpen} className="decision-project">
 							<span>Shipped in</span>
 							<strong>{project.name}</strong>
 							<em>Read the case study →</em>
-						</button>
+						</CaseLink>
 					</div>
 				</div>
 			</div>

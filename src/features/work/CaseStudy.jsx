@@ -1,5 +1,6 @@
 import {useEffect, useRef, useState} from 'react'
 import {projects} from '@/content/projects.js'
+import {CaseLink} from '@/components/CaseLink.jsx'
 import {CountUp} from '@/components/CountUp.jsx'
 import {ProjectCover} from '@/features/work/ProjectCover.jsx'
 import {responsiveImage} from '@/lib/images.js'
@@ -101,9 +102,16 @@ export function CaseStudy({slug, onOpen, onClose}) {
 				key={project.slug}
 			>
 				<header className="case-bar">
-					<span className="case-crumb">
-						<span>{number}</span> / {String(projects.length).padStart(2, '0')} · Case study
-					</span>
+					<nav className="case-crumb" aria-label="Breadcrumb">
+						<a href="/">Ahmad Hassan</a>
+						<span aria-hidden="true">/</span>
+						<a href="/#work">Work</a>
+						<span aria-hidden="true">/</span>
+						<span aria-current="page">{project.name}</span>
+						<small>
+							{number} of {String(projects.length).padStart(2, '0')}
+						</small>
+					</nav>
 					<div className="case-bar-actions">
 						<button type="button" onClick={() => onOpen(previous.slug)} aria-label={`Previous project: ${previous.name}`}>
 							←
@@ -231,13 +239,13 @@ export function CaseStudy({slug, onOpen, onClose}) {
 				)}
 
 				<footer className="case-next">
-					<button type="button" onClick={() => onOpen(next.slug)}>
+					<CaseLink slug={next.slug} onOpen={onOpen}>
 						<span>Next project</span>
 						<strong>
 							{next.name} <em>→</em>
 						</strong>
 						<small>{next.tagline}</small>
-					</button>
+					</CaseLink>
 				</footer>
 			</article>
 			{shot !== null && <Lightbox items={project.gallery} index={shot} onClose={() => setShot(null)} onMove={(step) => setShot((current) => (current + step + project.gallery.length) % project.gallery.length)} />}

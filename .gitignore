@@ -25,3 +25,6 @@ dist-ssr
 
 # Character source assets (large, not deployed)
 .character/
+
+# Server build used only to prerender pages
+dist-ssr

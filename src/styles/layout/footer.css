@@ -33,3 +33,27 @@
 	border: 0;
 	background: none;
 }
+
+.footer-work {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 22px;
+	padding-block: 0 28px;
+	font-size: 13px;
+	color: var(--muted);
+}
+
+.footer-work span {
+	font-family: var(--font-mono);
+	font-size: 11px;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+}
+
+.footer-work a {
+	transition: color .25s;
+}
+
+.footer-work a:hover {
+	color: var(--text);
+}

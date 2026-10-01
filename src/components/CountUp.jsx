@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react'
 import {useInView} from '@/hooks/useInView.js'
+import {usePrefersReducedMotion} from '@/hooks/usePrefersReducedMotion.js'
 
 const NUMBER = /\d[\d,]*(\.\d+)?/
 
@@ -9,8 +10,9 @@ export function CountUp({value, duration = 1400}) {
 	const match = String(value).match(NUMBER)
 	const target = match ? parseFloat(match[0].replace(/,/g, '')) : 0
 	const decimals = match?.[1] ? match[1].length - 1 : 0
-	const [current, setCurrent] = useState(0)
-	const [reduceMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+	// null means "not animating": the final value is shown, which is what the prerendered HTML contains.
+	const [current, setCurrent] = useState(null)
+	const reduceMotion = usePrefersReducedMotion()
 
 	useEffect(() => {
 		if (!inView || !match || reduceMotion) return
@@ -27,7 +29,7 @@ export function CountUp({value, duration = 1400}) {
 	}, [inView, target])
 
 	if (!match) return <span ref={ref}>{value}</span>
-	const shown = reduceMotion ? target : current
+	const shown = reduceMotion || current === null ? target : current
 	const formatted = shown.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals})
 	const [before, after] = String(value).split(match[0])
 	return (

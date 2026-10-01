@@ -20,7 +20,7 @@ export function Hero() {
 			<section className="hero page-shell" aria-labelledby="hero-title">
 				<div className="hero-copy">
 					<p className="hero-kicker">
-						<span className="kicker-line" /> {site.roleLong}
+						<span className="kicker-line" /> Software engineer in {site.location} · AI · Web · Android
 					</p>
 					<h1 id="hero-title" className="is-visible">
 						<SplitWords>
@@ -30,8 +30,8 @@ export function Hero() {
 						</SplitWords>
 					</h1>
 					<p className="hero-intro">
-						I’m <strong>{site.name}</strong>. Most LLM work stops at “it calls the model and runs on my machine.” Mine is engineered for the parts that break in production — token budgets, tenant isolation,
-						revocation-aware sessions, and deploys that actually happen.
+						I’m <strong>{site.name}</strong>, a software engineer and web developer in {site.city}. Most LLM work stops at “it calls the model and runs on my machine.” Mine is engineered for the parts that
+						break in production — token budgets, tenant isolation, revocation-aware sessions, and deploys that actually happen.
 					</p>
 					<div className="hero-actions">
 						<a className="btn btn-primary" href="#work">

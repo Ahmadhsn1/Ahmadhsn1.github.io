@@ -28,7 +28,7 @@ export function Contact() {
 				<div className="contact-glow" aria-hidden="true" />
 				<div className="contact-main">
 					<p className="eyebrow">
-						<span className="eyebrow-index">05</span>
+						<span className="eyebrow-index">07</span>
 						<span className="eyebrow-line" />
 						Contact
 					</p>

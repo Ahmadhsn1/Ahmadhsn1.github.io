@@ -6,6 +6,11 @@ export const site = {
 	role: 'AI Systems Engineer',
 	roleLong: 'AI Systems Engineer · Full-Stack · Native Android',
 	location: 'Lahore, Pakistan',
+	city: 'Lahore',
+	country: 'Pakistan',
+	// The public address of the site, from VITE_SITE_URL in .env (no trailing slash).
+	url: (import.meta.env.VITE_SITE_URL ?? '').replace(/\/$/, ''),
+	headline: 'Software engineer and web developer in Lahore, Pakistan',
 	timeZone: 'Asia/Karachi',
 	email: 'ahmad.hsn0099@gmail.com',
 	phone: '+923256522522',

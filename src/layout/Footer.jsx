@@ -1,11 +1,13 @@
+import {projects} from '@/content/projects.js'
 import {site, whatsappUrl} from '@/content/site.js'
 import {BrandMark} from '@/components/BrandMark.jsx'
+import {CaseLink} from '@/components/CaseLink.jsx'
 
-export function Footer({onPalette}) {
+export function Footer({onPalette, onOpenCase}) {
 	return (
 		<footer className="site-footer">
 			<div className="footer-inner page-shell">
-				<a className="brand" href="#home">
+				<a className="brand" href="/">
 					<BrandMark size={32} />
 					<span className="brand-text">
 						<span className="brand-name">{site.name}</span>
@@ -28,9 +30,17 @@ export function Footer({onPalette}) {
 					</button>
 				</nav>
 				<span className="footer-note">
-					© {new Date().getFullYear()} {site.name} · Designed and engineered by hand
+					© {new Date().getFullYear()} {site.name} · Software engineer in {site.city}
 				</span>
 			</div>
+			<nav className="footer-work page-shell" aria-label="Selected work">
+				<span>Selected work</span>
+				{projects.map((project) => (
+					<CaseLink key={project.slug} slug={project.slug} onOpen={onOpenCase}>
+						{project.name}
+					</CaseLink>
+				))}
+			</nav>
 		</footer>
 	)
 }

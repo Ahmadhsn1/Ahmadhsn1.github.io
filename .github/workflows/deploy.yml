@@ -48,3 +48,17 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+      # Tells Bing, Yandex and other IndexNow search engines about every page right after a deploy.
+      - name: Notify IndexNow
+        continue-on-error: true
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+          INDEXNOW_KEY: e280f8b4342d70583e86f664101f1dba
+        run: |
+          sleep 20
+          host=$(echo "$PAGE_URL" | sed -E 's#https?://([^/]+)/?.*#\1#')
+          urls=$(curl -fsS "${PAGE_URL}sitemap.xml" | grep -o '<loc>[^<]*' | sed 's/<loc>//' | jq -R . | jq -s .)
+          jq -n --arg host "$host" --arg key "$INDEXNOW_KEY" --arg loc "${PAGE_URL}${INDEXNOW_KEY}.txt" --argjson urls "$urls" \
+            '{host: $host, key: $key, keyLocation: $loc, urlList: $urls}' \
+            | curl -fsS -X POST https://api.indexnow.org/indexnow -H 'Content-Type: application/json; charset=utf-8' -d @-

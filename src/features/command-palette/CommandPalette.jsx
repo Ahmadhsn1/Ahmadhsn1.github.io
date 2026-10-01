@@ -3,7 +3,12 @@ import {projects} from '@/content/projects.js'
 import {site, whatsappUrl} from '@/content/site.js'
 import {useToast} from '@/components/Toast.jsx'
 
-const jump = (id) => document.getElementById(id)?.scrollIntoView({behavior: 'smooth', block: 'start'})
+const jump = (id) => {
+	const section = document.getElementById(id)
+	// Off the home page (a case study opened directly), the sections are on the home URL.
+	if (section) section.scrollIntoView({behavior: 'smooth', block: 'start'})
+	else window.location.href = `/#${id}`
+}
 
 export function CommandPalette({open, onClose, onOpenCase}) {
 	const [query, setQuery] = useState('')

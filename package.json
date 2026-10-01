@@ -10,10 +10,10 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && vite build --ssr src/entry-server.jsx --outDir dist-ssr && node scripts/prerender.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
-    "check": "eslint . && vite build"
+    "check": "eslint . && npm run build"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.3.0",

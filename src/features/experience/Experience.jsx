@@ -1,11 +1,12 @@
 import {experience} from '@/content/profile.js'
+import {CaseLink} from '@/components/CaseLink.jsx'
 import {SectionHeading} from '@/components/SectionHeading.jsx'
 
 export function Experience({onOpen}) {
 	return (
 		<section className="experience-section page-shell" id="experience" aria-labelledby="experience-title">
 			<SectionHeading
-				index="04"
+				index="05"
 				eyebrow="Experience"
 				title={
 					<span id="experience-title">
@@ -22,9 +23,9 @@ export function Experience({onOpen}) {
 						</div>
 						<p>{item.detail}</p>
 						{item.project && (
-							<button type="button" className="text-link" onClick={() => onOpen(item.project)}>
+							<CaseLink slug={item.project} onOpen={onOpen} className="text-link">
 								View the work <span aria-hidden="true">→</span>
-							</button>
+							</CaseLink>
 						)}
 					</li>
 				))}

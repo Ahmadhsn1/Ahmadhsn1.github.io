@@ -58,13 +58,31 @@
 }
 
 .case-crumb {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 4px 8px;
 	font-family: var(--font-mono);
 	font-size: 12px;
 	color: var(--muted);
 }
 
-.case-crumb span {
+.case-crumb a {
+	transition: color .25s;
+}
+
+.case-crumb a:hover {
+	color: var(--text);
+}
+
+.case-crumb [aria-current] {
 	color: var(--accent);
+}
+
+.case-crumb small {
+	margin-left: 8px;
+	font-size: inherit;
+	opacity: .6;
 }
 
 .case-bar-actions {
@@ -397,7 +415,7 @@
 	padding-block: 40px 64px;
 }
 
-.case-next button {
+.case-next a {
 	display: grid;
 	gap: 6px;
 	width: 100%;
@@ -409,7 +427,7 @@
 	transition: border-color .3s, background .3s;
 }
 
-.case-next button:hover {
+.case-next a:hover {
 	border-color: var(--line-strong);
 	background: var(--surface-strong);
 }
@@ -435,7 +453,7 @@
 	transition: transform .35s var(--ease);
 }
 
-.case-next button:hover strong em {
+.case-next a:hover strong em {
 	transform: translateX(8px);
 }
 
