@@ -61,7 +61,14 @@ export function Header({onPalette}) {
 					<a className="nav-cta" href="#contact" onClick={closeMenu}>
 						<span className="pulse-dot" /> Hire me
 					</a>
-					<button className="menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="primary-navigation" aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'} onClick={() => setMenuOpen(!menuOpen)}>
+					<button
+						className="menu-toggle"
+						type="button"
+						aria-expanded={menuOpen}
+						aria-controls="primary-navigation"
+						aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+						onClick={() => setMenuOpen(!menuOpen)}
+					>
 						<span />
 						<span />
 					</button>

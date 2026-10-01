@@ -65,77 +65,86 @@ export function HeroStage() {
 		<figure className="hero-stage" data-phase={phase.id}>
 			<div className="set" ref={stageRef} onPointerMove={move} onPointerLeave={reset}>
 				<div className="set-room" aria-hidden="true">
-				<div className="set-layer set-wall">
-					<span className="wall-slats" />
-					<span className="wall-wash" />
-					<span className="neon">&lt;/&gt;</span>
-					<div className="shelf">
-						<div className="shelf-books">
-							{BOOKS.map((book) => (
-								<i key={book.c} style={{'--bh': `${book.h}%`, '--bc': book.c}} />
-							))}
+					<div className="set-layer set-wall">
+						<span className="wall-slats" />
+						<span className="wall-wash" />
+						<span className="neon">&lt;/&gt;</span>
+						<div className="shelf">
+							<div className="shelf-books">
+								{BOOKS.map((book) => (
+									<i key={book.c} style={{'--bh': `${book.h}%`, '--bc': book.c}} />
+								))}
+							</div>
+							<span className="shelf-plant">
+								<i />
+								<i />
+								<i />
+							</span>
+							<span className="shelf-board" />
 						</div>
-						<span className="shelf-plant">
-							<i />
+						<span className="led-strip" />
+					</div>
+
+					<div className="set-layer set-desk">
+						<div className="lamp">
+							<span className="lamp-arm" />
+							<span className="lamp-head" />
+							<span className="lamp-cone" />
+						</div>
+						<div className="monitor monitor-main">
+							<span className="screenbar" />
+							<div className="monitor-bezel">
+								<div className="monitor-screen">
+									<CodeEditor phase={phase} t={clock.t} />
+								</div>
+							</div>
+							<span className="monitor-neck" />
+							<span className="monitor-foot" />
+						</div>
+						<div className="monitor monitor-side">
+							<div className="monitor-bezel">
+								<div className="monitor-screen">
+									<PipelineScreen phase={phase.id} />
+								</div>
+							</div>
+							<span className="monitor-neck" />
+							<span className="monitor-foot" />
+						</div>
+						<div className="desk">
+							<span className="desk-top" />
+							<span className="desk-edge" />
+						</div>
+						<div className="laptop">
+							<div className="laptop-lid">
+								<div className="monitor-screen">
+									<MetricsScreen phase={phase.id} />
+								</div>
+							</div>
+							<span className="laptop-base" />
+						</div>
+						<span className="keyboard" />
+						<span className="mouse" />
+						<span className="mug">
 							<i />
 							<i />
 						</span>
-						<span className="shelf-board" />
 					</div>
-					<span className="led-strip" />
-				</div>
-
-				<div className="set-layer set-desk">
-					<div className="lamp">
-						<span className="lamp-arm" />
-						<span className="lamp-head" />
-						<span className="lamp-cone" />
-					</div>
-					<div className="monitor monitor-main">
-						<span className="screenbar" />
-						<div className="monitor-bezel">
-							<div className="monitor-screen">
-								<CodeEditor phase={phase} t={clock.t} />
-							</div>
-						</div>
-						<span className="monitor-neck" />
-						<span className="monitor-foot" />
-					</div>
-					<div className="monitor monitor-side">
-						<div className="monitor-bezel">
-							<div className="monitor-screen">
-								<PipelineScreen phase={phase.id} />
-							</div>
-						</div>
-						<span className="monitor-neck" />
-						<span className="monitor-foot" />
-					</div>
-					<div className="desk">
-						<span className="desk-top" />
-						<span className="desk-edge" />
-					</div>
-					<div className="laptop">
-						<div className="laptop-lid">
-							<div className="monitor-screen">
-								<MetricsScreen phase={phase.id} />
-							</div>
-						</div>
-						<span className="laptop-base" />
-					</div>
-					<span className="keyboard" />
-					<span className="mouse" />
-					<span className="mug">
-						<i />
-						<i />
-					</span>
-				</div>
-				<span className="room-vignette" />
+					<span className="room-vignette" />
 				</div>
 
 				<div className="set-layer set-hero">
 					<div className={figureReady ? 'hero-figure is-ready' : 'hero-figure'}>
 						<span className="hero-contact" aria-hidden="true" />
-						<img src="/images/hero/ahmad-3d.webp" alt="Ahmad Hassan as a stylised 3D character in a denim jacket, standing in front of his coding setup" width="514" height="1522" decoding="async" fetchPriority="high" onLoad={(event) => revealFigure(event.currentTarget)} ref={(node) => node?.complete && revealFigure(node)} />
+						<img
+							src="/images/hero/ahmad-3d.webp"
+							alt="Ahmad Hassan as a stylised 3D character in a denim jacket, standing in front of his coding setup"
+							width="514"
+							height="1522"
+							decoding="async"
+							fetchPriority="high"
+							onLoad={(event) => revealFigure(event.currentTarget)}
+							ref={(node) => node?.complete && revealFigure(node)}
+						/>
 						<span className="hero-light hero-light-key" aria-hidden="true" />
 						<span className="hero-light hero-light-shade" aria-hidden="true" />
 					</div>

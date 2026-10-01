@@ -12,20 +12,21 @@ export function CommandPalette({open, onClose, onOpenCase}) {
 	const toast = useToast()
 
 	const commands = useMemo(
-		() => [
-			...projects.map((project) => ({group: 'Case studies', label: project.name, hint: project.type, run: () => onOpenCase(project.slug)})),
-			{group: 'Navigate', label: 'Selected work', hint: 'Section', run: () => jump('work')},
-			{group: 'Navigate', label: 'Engineering decisions', hint: 'Section', run: () => jump('decisions')},
-			{group: 'Navigate', label: 'How I build', hint: 'Section', run: () => jump('stack')},
-			{group: 'Navigate', label: 'Experience', hint: 'Section', run: () => jump('experience')},
-			{group: 'Navigate', label: 'Contact', hint: 'Section', run: () => jump('contact')},
-			{group: 'Contact', label: 'Copy email address', hint: site.email, run: () => navigator.clipboard.writeText(site.email).then(() => toast('Email copied to clipboard'))},
-			{group: 'Contact', label: 'Send an email', hint: 'mailto', run: () => (window.location.href = `mailto:${site.email}`)},
-			site.phone && {group: 'Contact', label: 'Call', hint: site.phone, run: () => (window.location.href = `tel:${site.phone}`)},
-			site.phone && {group: 'Contact', label: 'Chat on WhatsApp', hint: 'wa.me', run: () => window.open(whatsappUrl(site.phone), '_blank', 'noopener')},
-			{group: 'Contact', label: 'Open LinkedIn', hint: 'linkedin.com', run: () => window.open(site.linkedin, '_blank', 'noopener')},
-			{group: 'Contact', label: 'Open GitHub', hint: 'github.com', run: () => window.open(site.github, '_blank', 'noopener')},
-		].filter(Boolean),
+		() =>
+			[
+				...projects.map((project) => ({group: 'Case studies', label: project.name, hint: project.type, run: () => onOpenCase(project.slug)})),
+				{group: 'Navigate', label: 'Selected work', hint: 'Section', run: () => jump('work')},
+				{group: 'Navigate', label: 'Engineering decisions', hint: 'Section', run: () => jump('decisions')},
+				{group: 'Navigate', label: 'How I build', hint: 'Section', run: () => jump('stack')},
+				{group: 'Navigate', label: 'Experience', hint: 'Section', run: () => jump('experience')},
+				{group: 'Navigate', label: 'Contact', hint: 'Section', run: () => jump('contact')},
+				{group: 'Contact', label: 'Copy email address', hint: site.email, run: () => navigator.clipboard.writeText(site.email).then(() => toast('Email copied to clipboard'))},
+				{group: 'Contact', label: 'Send an email', hint: 'mailto', run: () => (window.location.href = `mailto:${site.email}`)},
+				site.phone && {group: 'Contact', label: 'Call', hint: site.phone, run: () => (window.location.href = `tel:${site.phone}`)},
+				site.phone && {group: 'Contact', label: 'Chat on WhatsApp', hint: 'wa.me', run: () => window.open(whatsappUrl(site.phone), '_blank', 'noopener')},
+				{group: 'Contact', label: 'Open LinkedIn', hint: 'linkedin.com', run: () => window.open(site.linkedin, '_blank', 'noopener')},
+				{group: 'Contact', label: 'Open GitHub', hint: 'github.com', run: () => window.open(site.github, '_blank', 'noopener')},
+			].filter(Boolean),
 		[onOpenCase, toast]
 	)
 
@@ -96,7 +97,15 @@ export function CommandPalette({open, onClose, onOpenCase}) {
 						return (
 							<li key={`${command.group}-${command.label}`} role="presentation">
 								{heading && <p className="palette-group">{heading}</p>}
-								<button type="button" role="option" id={`palette-item-${index}`} aria-selected={index === cursor} className={index === cursor ? 'is-active' : undefined} onPointerMove={() => setCursor(index)} onClick={() => run(command)}>
+								<button
+									type="button"
+									role="option"
+									id={`palette-item-${index}`}
+									aria-selected={index === cursor}
+									className={index === cursor ? 'is-active' : undefined}
+									onPointerMove={() => setCursor(index)}
+									onClick={() => run(command)}
+								>
 									<span>{command.label}</span>
 									<small>{command.hint}</small>
 								</button>

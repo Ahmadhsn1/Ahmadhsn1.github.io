@@ -27,7 +27,9 @@ export function Footer({onPalette}) {
 						<kbd>⌘K</kbd>
 					</button>
 				</nav>
-				<span className="footer-note">© {new Date().getFullYear()} {site.name} · Designed and engineered by hand</span>
+				<span className="footer-note">
+					© {new Date().getFullYear()} {site.name} · Designed and engineered by hand
+				</span>
 			</div>
 		</footer>
 	)

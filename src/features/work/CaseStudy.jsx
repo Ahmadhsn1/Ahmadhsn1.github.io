@@ -89,7 +89,17 @@ export function CaseStudy({slug, onOpen, onClose}) {
 
 	return (
 		<div className="case-layer" onClick={onClose}>
-			<article className="case-sheet" ref={sheetRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="case-title" style={{'--accent': project.accent}} onClick={(event) => event.stopPropagation()} key={project.slug}>
+			<article
+				className="case-sheet"
+				ref={sheetRef}
+				tabIndex={-1}
+				role="dialog"
+				aria-modal="true"
+				aria-labelledby="case-title"
+				style={{'--accent': project.accent}}
+				onClick={(event) => event.stopPropagation()}
+				key={project.slug}
+			>
 				<header className="case-bar">
 					<span className="case-crumb">
 						<span>{number}</span> / {String(projects.length).padStart(2, '0')} · Case study
@@ -140,7 +150,13 @@ export function CaseStudy({slug, onOpen, onClose}) {
 							<p className="case-private">{project.privateNote}</p>
 						)}
 					</div>
-					<button type="button" className="case-cover" onClick={() => project.gallery.length && setShot(0)} disabled={!project.gallery.length} aria-label={project.gallery.length ? 'Open screenshots' : undefined}>
+					<button
+						type="button"
+						className="case-cover"
+						onClick={() => project.gallery.length && setShot(0)}
+						disabled={!project.gallery.length}
+						aria-label={project.gallery.length ? 'Open screenshots' : undefined}
+					>
 						<ProjectCover project={project} eager />
 						{typeof project.cover === 'object' && <span className="case-cover-note">{project.links.length ? 'Illustration · see the live product' : 'Illustration · product screens are private'}</span>}
 					</button>

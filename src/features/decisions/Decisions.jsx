@@ -10,11 +10,31 @@ export function Decisions({onOpen}) {
 
 	return (
 		<section className="decisions-section page-shell" id="decisions" aria-labelledby="decisions-title">
-			<SectionHeading index="02" eyebrow="Engineering judgement" title={<span id="decisions-title">Decisions I’d defend <em>in a review.</em></span>} aside="The calls that separate a demo from a product. Pick one to see where it shipped." />
+			<SectionHeading
+				index="02"
+				eyebrow="Engineering judgement"
+				title={
+					<span id="decisions-title">
+						Decisions I’d defend <em>in a review.</em>
+					</span>
+				}
+				aside="The calls that separate a demo from a product. Pick one to see where it shipped."
+			/>
 			<div className="decisions" data-reveal>
 				<div className="decision-list" role="tablist" aria-label="Engineering decisions" aria-orientation="vertical">
 					{decisions.map((item, index) => (
-						<button key={item.title} type="button" role="tab" id={`decision-tab-${index}`} aria-selected={index === active} aria-controls="decision-panel" className={index === active ? 'is-active' : undefined} onClick={() => setActive(index)} onFocus={() => setActive(index)} onPointerEnter={() => setActive(index)}>
+						<button
+							key={item.title}
+							type="button"
+							role="tab"
+							id={`decision-tab-${index}`}
+							aria-selected={index === active}
+							aria-controls="decision-panel"
+							className={index === active ? 'is-active' : undefined}
+							onClick={() => setActive(index)}
+							onFocus={() => setActive(index)}
+							onPointerEnter={() => setActive(index)}
+						>
 							<span className="decision-index">{String(index + 1).padStart(2, '0')}</span>
 							{item.title}
 						</button>

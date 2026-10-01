@@ -4,7 +4,15 @@ import {SectionHeading} from '@/components/SectionHeading.jsx'
 export function HowIBuild() {
 	return (
 		<section className="build-section page-shell" id="stack" aria-labelledby="build-title">
-			<SectionHeading index="03" eyebrow="How I build" title={<span id="build-title">Seven rules, and the tools <em>I reach for.</em></span>} />
+			<SectionHeading
+				index="03"
+				eyebrow="How I build"
+				title={
+					<span id="build-title">
+						Seven rules, and the tools <em>I reach for.</em>
+					</span>
+				}
+			/>
 			<div className="build-grid">
 				<ol className="principles">
 					{principles.map((principle, index) => (

@@ -16,7 +16,8 @@ export const projects = [
 		cover: '/images/projects/easyquran/site.jpg',
 		coverPosition: '8% 30%',
 		accent: '#e0a24a',
-		summary: 'A native Quran study app for Muslim families — the full text with 11+ translations, verse-by-verse recitation with repeat mode, tafseer from Ibn Kathir and Maududi, topic-based browsing, and daily reading goals with streak tracking. Works fully offline after the first download; scholar-certified; completely ad-free.',
+		summary:
+			'A native Quran study app for Muslim families — the full text with 11+ translations, verse-by-verse recitation with repeat mode, tafseer from Ibn Kathir and Maududi, topic-based browsing, and daily reading goals with streak tracking. Works fully offline after the first download; scholar-certified; completely ad-free.',
 		metrics: [
 			{value: '10,000+', label: 'families'},
 			{value: '4.9★', label: 'Google Play'},
@@ -52,7 +53,8 @@ export const projects = [
 		categories: ['AI', 'Web'],
 		cover: {art: 'aria'},
 		accent: '#8fb3ff',
-		summary: 'A conversational booking layer on top of Prime Coworking’s e-Booking product. Customers chat in any language — “need an appointment tomorrow after 5” — and Aria resolves the service and staff, offers real open slots, and books, reschedules or cancels. Aria owns no availability or booking logic: the booking engine stays the single source of truth and Aria is a pure orchestration layer, so the assistant and the product’s own booking widget can never drift apart.',
+		summary:
+			'A conversational booking layer on top of Prime Coworking’s e-Booking product. Customers chat in any language — “need an appointment tomorrow after 5” — and Aria resolves the service and staff, offers real open slots, and books, reschedules or cancels. Aria owns no availability or booking logic: the booking engine stays the single source of truth and Aria is a pure orchestration layer, so the assistant and the product’s own booking widget can never drift apart.',
 		metrics: [
 			{value: '15', label: 'tool-calling functions'},
 			{value: '40', label: 'message bounded history'},
@@ -67,8 +69,14 @@ export const projects = [
 			'MongoDB conversation memory with orphan-turn protection',
 		],
 		engineering: [
-			{title: 'The model orchestrates; it never owns the truth', text: 'Each of the 15 tools wraps the exact domain service the e-Booking widget already calls, so there is no second copy of the availability logic for the AI to disagree with.'},
-			{title: 'A public endpoint still needs teeth', text: 'The booking API is unauthenticated by design, so mutations are OTP-gated, rate-limited per IP, locked after repeated bad attempts and written to an audit log — and the prompt’s integrity block means a customer can’t talk their way past any of it.'},
+			{
+				title: 'The model orchestrates; it never owns the truth',
+				text: 'Each of the 15 tools wraps the exact domain service the e-Booking widget already calls, so there is no second copy of the availability logic for the AI to disagree with.',
+			},
+			{
+				title: 'A public endpoint still needs teeth',
+				text: 'The booking API is unauthenticated by design, so mutations are OTP-gated, rate-limited per IP, locked after repeated bad attempts and written to an audit log — and the prompt’s integrity block means a customer can’t talk their way past any of it.',
+			},
 			{title: 'Provider-neutral LLM layer', text: 'Gemini 2.5 Flash today, swappable tomorrow — the tool loop never imports a vendor SDK directly.'},
 		],
 		stack: {Backend: ['NestJS', 'TypeScript', 'MongoDB'], AI: ['Gemini 2.5 Flash', 'Tool calling', 'Provider-neutral layer'], Client: ['React 19', 'Iframe widget']},
@@ -85,7 +93,8 @@ export const projects = [
 		categories: ['AI', 'Web'],
 		cover: '/images/projects/retrivo/hero.jpg',
 		accent: '#9d8cff',
-		summary: 'A production-grade, individual-focused RAG SaaS. Upload contracts, papers and notes, ask questions in plain language, and get streaming answers that cite the exact passage they came from — and say “not in your documents” instead of guessing.',
+		summary:
+			'A production-grade, individual-focused RAG SaaS. Upload contracts, papers and notes, ask questions in plain language, and get streaming answers that cite the exact passage they came from — and say “not in your documents” instead of guessing.',
 		metrics: [
 			{value: '142', label: 'tests'},
 			{value: '3-tier', label: 'chunking cascade'},
@@ -101,11 +110,19 @@ export const projects = [
 			'Operator admin console: presence, complimentary grants, broadcasts, audit log',
 		],
 		engineering: [
-			{title: 'Isolation is enforced by the index, not the query', text: 'The userId filter is part of the Atlas Vector Search index definition and applied inside the ANN search — post-filtering would let other users’ vectors consume the top-k slots.'},
+			{
+				title: 'Isolation is enforced by the index, not the query',
+				text: 'The userId filter is part of the Atlas Vector Search index definition and applied inside the ANN search — post-filtering would let other users’ vectors consume the top-k slots.',
+			},
 			{title: 'Chunking that survives hostile documents', text: 'Paragraphs → sentences → fixed-width hard split, with 150-character overlap so a fact straddling a boundary appears whole in at least one chunk.'},
 			{title: 'Refresh-token reuse detection with a grace window', text: 'Token families with rotation stamps: a replay within 15s is a client retry, anything older revokes the entire family.'},
 		],
-		stack: {Backend: ['Node', 'Express', 'MongoDB Atlas Vector Search'], AI: ['Gemini embeddings', 'Gemini generation', 'SSE streaming'], Frontend: ['React', 'TypeScript'], Platform: ['Stripe', 'Web Push', 'OpenAPI']},
+		stack: {
+			Backend: ['Node', 'Express', 'MongoDB Atlas Vector Search'],
+			AI: ['Gemini embeddings', 'Gemini generation', 'SSE streaming'],
+			Frontend: ['React', 'TypeScript'],
+			Platform: ['Stripe', 'Web Push', 'OpenAPI'],
+		},
 		gallery: [
 			{src: '/images/projects/retrivo/hero.jpg', caption: 'The promise, and the mechanism behind it — the pipeline is on the hero on purpose.'},
 			{src: '/images/projects/retrivo/pipeline.jpg', caption: 'Question → cited answer. Every stage reports itself, with match scores on each citation.'},
@@ -123,7 +140,8 @@ export const projects = [
 		categories: ['AI', 'Web'],
 		cover: '/images/projects/leadforge/dashboard.jpg',
 		accent: '#ff8a5c',
-		summary: 'Researches local businesses, explains why each one is worth contacting — with citable evidence for every claim — and drafts the message you would actually send. A claim the model can’t trace back to a stored observation is dropped before it ever reaches you.',
+		summary:
+			'Researches local businesses, explains why each one is worth contacting — with citable evidence for every claim — and drafts the message you would actually send. A claim the model can’t trace back to a stored observation is dropped before it ever reaches you.',
 		metrics: [
 			{value: '198', label: 'automated checks'},
 			{value: '6', label: 'scoring dimensions'},
@@ -139,11 +157,19 @@ export const projects = [
 		],
 		engineering: [
 			{title: 'A claim without a citation doesn’t ship', text: 'The model is asked to explain numbers computed in code; any numbers it returns are discarded.'},
-			{title: 'The worker boots the API’s own module graph', text: 'Verification, scoring and outreach run from HTTP and the queue through one implementation, so a lead can never score differently depending on the path.'},
+			{
+				title: 'The worker boots the API’s own module graph',
+				text: 'Verification, scoring and outreach run from HTTP and the queue through one implementation, so a lead can never score differently depending on the path.',
+			},
 			{title: 'SSRF protection on every redirect hop', text: 'Private, loopback and cloud-metadata ranges are refused before each hop, with byte and time caps.'},
 			{title: 'Rate limits reschedule rather than retry', text: 'A daily quota no longer burns five retries in thirty seconds and dead-letters while hours of quota remain.'},
 		],
-		stack: {Frontend: ['Next.js 15', 'React 19', 'Tailwind', 'Radix', 'TanStack Query'], Backend: ['NestJS 11', 'Prisma 6', 'Zod', 'argon2id'], Data: ['PostgreSQL 16', 'Redis 7', 'BullMQ 5'], AI: ['OpenRouter', 'Strict JSON schemas']},
+		stack: {
+			Frontend: ['Next.js 15', 'React 19', 'Tailwind', 'Radix', 'TanStack Query'],
+			Backend: ['NestJS 11', 'Prisma 6', 'Zod', 'argon2id'],
+			Data: ['PostgreSQL 16', 'Redis 7', 'BullMQ 5'],
+			AI: ['OpenRouter', 'Strict JSON schemas'],
+		},
 		gallery: [
 			{src: '/images/projects/leadforge/dashboard.jpg', caption: 'Command centre — the day’s pipeline at a glance.'},
 			{src: '/images/projects/leadforge/lead-intelligence.jpg', caption: 'Lead intelligence — every claim carries the evidence it came from.'},
@@ -166,7 +192,8 @@ export const projects = [
 		categories: ['Web', 'Product'],
 		cover: {art: 'retailflow'},
 		accent: '#7dd3a8',
-		summary: 'A multi-tenant POS, inventory and credit-ledger platform for South Asian shops — barcode billing, weighted-average costing, khata credit ledgers and shift reconciliation, on a Postgres schema where every tenant is isolated by Row Level Security and every rupee is an integer.',
+		summary:
+			'A multi-tenant POS, inventory and credit-ledger platform for South Asian shops — barcode billing, weighted-average costing, khata credit ledgers and shift reconciliation, on a Postgres schema where every tenant is isolated by Row Level Security and every rupee is an integer.',
 		metrics: [
 			{value: '231', label: 'tests'},
 			{value: '35', label: 'tables'},
@@ -202,7 +229,8 @@ export const projects = [
 		categories: ['AI', 'Web'],
 		cover: '/images/projects/notemind/dashboard.jpg',
 		accent: '#b9a4ff',
-		summary: 'An AI-augmented MERN note-taking platform engineered to production standards: semantic search and cited Q&A across your notes, SM-2 flashcards generated from raw notes, and a live force-directed graph of wikilinked notes — free, with no ads and no paid tier.',
+		summary:
+			'An AI-augmented MERN note-taking platform engineered to production standards: semantic search and cited Q&A across your notes, SM-2 flashcards generated from raw notes, and a live force-directed graph of wikilinked notes — free, with no ads and no paid tier.',
 		metrics: [
 			{value: '173', label: 'tests'},
 			{value: '0', label: 'vulnerabilities'},
@@ -275,7 +303,8 @@ export const projects = [
 		categories: ['AI', 'Web'],
 		cover: '/images/projects/larder/hero.jpg',
 		accent: '#d98b5f',
-		summary: 'A conversational menu and booking assistant for a modern British bistro — streamed from the model, grounded in real data, and wrapped in the cost controls, guardrails and abuse protection a public LLM endpoint actually needs.',
+		summary:
+			'A conversational menu and booking assistant for a modern British bistro — streamed from the model, grounded in real data, and wrapped in the cost controls, guardrails and abuse protection a public LLM endpoint actually needs.',
 		metrics: [
 			{value: '8', label: 'stage request pipeline'},
 			{value: '~19', label: 'zero-token intercepts'},
@@ -315,7 +344,8 @@ export const projects = [
 		categories: ['Mobile', 'Product'],
 		cover: '/images/projects/mindscribe/banner.svg',
 		accent: '#9ec5a7',
-		summary: 'A native Android journaling app built on one conviction: what people write about their own lives is sensitive data. The journal locks independently of the phone, writing never blocks on the network, and journaling is guided rather than blank-page.',
+		summary:
+			'A native Android journaling app built on one conviction: what people write about their own lives is sensitive data. The journal locks independently of the phone, writing never blocks on the network, and journaling is guided rather than blank-page.',
 		metrics: [
 			{value: '25', label: 'classes'},
 			{value: '3,857', label: 'lines of Java'},
@@ -349,7 +379,8 @@ export const projects = [
 		categories: ['Mobile', 'Product'],
 		cover: '/images/projects/spendsmart/banner.jpg',
 		accent: '#6fcf97',
-		summary: 'A personal-finance tracker for Android with no backend server: the app talks to Cloud Firestore directly over an authenticated channel, so reads are live — and the security rules are the entire authorization layer.',
+		summary:
+			'A personal-finance tracker for Android with no backend server: the app talks to Cloud Firestore directly over an authenticated channel, so reads are live — and the security rules are the entire authorization layer.',
 		metrics: [
 			{value: '0', label: 'backend servers'},
 			{value: '8', label: 'dependency lines'},
@@ -385,7 +416,8 @@ export const projects = [
 		categories: ['Web', 'Product'],
 		cover: '/images/projects/fittrack/dashboard.jpg',
 		accent: '#ff7a59',
-		summary: 'An admin dashboard that answers “how is my gym doing right now?” — members, memberships, attendance, trainers and payments — built as a single-page React app with a hand-authored design system and zero UI dependencies.',
+		summary:
+			'An admin dashboard that answers “how is my gym doing right now?” — members, memberships, attendance, trainers and payments — built as a single-page React app with a hand-authored design system and zero UI dependencies.',
 		metrics: [
 			{value: '8', label: 'routes'},
 			{value: '0', label: 'UI dependencies'},
