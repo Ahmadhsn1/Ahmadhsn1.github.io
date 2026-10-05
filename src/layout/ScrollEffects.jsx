@@ -8,11 +8,17 @@ export function ScrollEffects() {
 		const root = document.querySelector('#root')
 		root.classList.add('has-scroll-reveal')
 
+		// Elements that have been revealed once. React rewrites a node's whole className whenever one of its own
+		// class props changes (for example the featured project card when the filter changes), which would drop
+		// the imperatively added `is-visible` and leave a card invisible but still clickable.
+		const revealed = new WeakSet()
+
 		const reveal = new IntersectionObserver(
 			(entries) => {
 				for (const entry of entries) {
 					if (!entry.isIntersecting) continue
 					entry.target.classList.add('is-visible')
+					revealed.add(entry.target)
 					reveal.unobserve(entry.target)
 				}
 			},
@@ -25,8 +31,16 @@ export function ScrollEffects() {
 		}
 		watch(root)
 
-		const mutations = new MutationObserver((records) => records.forEach((record) => record.addedNodes.forEach(watch)))
-		mutations.observe(root, {childList: true, subtree: true})
+		const mutations = new MutationObserver((records) => {
+			for (const record of records) {
+				if (record.type === 'attributes') {
+					if (revealed.has(record.target) && !record.target.classList.contains('is-visible')) record.target.classList.add('is-visible')
+				} else {
+					record.addedNodes.forEach(watch)
+				}
+			}
+		})
+		mutations.observe(root, {childList: true, subtree: true, attributes: true, attributeFilter: ['class']})
 
 		// Only the two elements that read scroll progress get the variables; writing them on <html>
 		// would restyle the whole document every frame.
