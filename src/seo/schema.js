@@ -10,6 +10,8 @@ const ids = {
 }
 
 const knowsAbout = [
+	'Full-stack development',
+	'AI engineering',
 	'Software engineering',
 	'Web development',
 	'Web design',
@@ -28,7 +30,7 @@ const person = () => ({
 	alternateName: [site.githubHandle],
 	url: absoluteUrl('/'),
 	image: absoluteUrl('/images/hero/ahmad-3d.webp'),
-	jobTitle: 'Software Engineer',
+	jobTitle: site.role,
 	description: `${site.headline}. Builds AI products, web applications and native Android apps end to end.`,
 	email: `mailto:${site.email}`,
 	telephone: site.phone,

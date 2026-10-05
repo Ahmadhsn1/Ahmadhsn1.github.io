@@ -38,8 +38,12 @@ for (const url of urls) {
 		continue
 	}
 
-	if (!/<title>[^<]{10,}<\/title>/.test(html)) fail(`${file}: missing or short <title>`)
-	if (!/<meta name="description" content="[^"]{50,}"/.test(html)) fail(`${file}: missing or short meta description`)
+	const title = html.match(/<title>([^<]*)<\/title>/)?.[1] ?? ''
+	const description = html.match(/<meta name="description"\s+content="([^"]*)"/)?.[1] ?? ''
+	if (title.length < 10) fail(`${file}: missing or short <title>`)
+	if (title.length > 65) fail(`${file}: <title> is ${title.length} characters, Google truncates after about 60`)
+	if (description.length < 50) fail(`${file}: missing or short meta description`)
+	if (description.length > 160) fail(`${file}: meta description is ${description.length} characters, Google truncates after about 155`)
 	if (!new RegExp(`<link rel="canonical" href="${url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`).test(html)) fail(`${file}: canonical does not match sitemap URL`)
 	if (!/<meta property="og:image" content="https:\/\//.test(html)) fail(`${file}: missing absolute og:image`)
 	const h1Count = (html.match(/<h1[\s>]/g) ?? []).length

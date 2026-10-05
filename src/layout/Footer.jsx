@@ -31,7 +31,7 @@ export function Footer({onPalette, onOpenCase}) {
 					</button>
 				</nav>
 				<span className="footer-note">
-					© {new Date().getFullYear()} {site.name} · Software engineer in {site.city}
+					© {new Date().getFullYear()} {site.name} · {site.role} in {site.city}
 				</span>
 			</div>
 			<nav className="footer-work page-shell" aria-label="Selected work">

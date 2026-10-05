@@ -3,14 +3,14 @@
 // When it is empty the phone and WhatsApp actions are simply not rendered.
 export const site = {
 	name: 'Ahmad Hassan',
-	role: 'AI Systems Engineer',
-	roleLong: 'AI Systems Engineer · Full-Stack · Native Android',
+	role: 'Full-Stack AI Engineer',
+	roleLong: 'Full-Stack AI Engineer · Web · Native Android',
 	location: 'Lahore, Pakistan',
 	city: 'Lahore',
 	country: 'Pakistan',
 	// The public address of the site, from VITE_SITE_URL in .env (no trailing slash).
 	url: (import.meta.env.VITE_SITE_URL ?? '').replace(/\/$/, ''),
-	headline: 'Software engineer and web developer in Lahore, Pakistan',
+	headline: 'Full-stack engineer and AI engineer in Lahore, Pakistan',
 	timeZone: 'Asia/Karachi',
 	email: 'ahmad.hsn0099@gmail.com',
 	phone: '+923256522522',

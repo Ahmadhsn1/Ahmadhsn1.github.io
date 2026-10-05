@@ -4,7 +4,7 @@ import {site} from '@/content/site.js'
 export const faq = [
 	{
 		question: 'Who is Ahmad Hassan?',
-		answer: `Ahmad Hassan (GitHub: ${site.githubHandle}) is a software engineer based in ${site.location}. He builds AI products, web applications and native Android apps end to end, and is co-lead developer of EasyQuran, a Quran study app used by more than 10,000 families with a 4.9-star rating on Google Play.`,
+		answer: `Ahmad Hassan (GitHub: ${site.githubHandle}) is a full-stack AI engineer based in ${site.location}. He builds AI products, web applications and native Android apps end to end, and is co-lead developer of EasyQuran, a Quran study app used by more than 10,000 families with a 4.9-star rating on Google Play.`,
 	},
 	{
 		question: 'What kind of software does Ahmad Hassan build?',

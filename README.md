@@ -2,7 +2,7 @@
 
 **Live:** https://ahmadhsn1.github.io
 
-Personal site of **Ahmad Hassan**, AI Systems Engineer (full-stack · native Android), based in Lahore.
+Personal site of **Ahmad Hassan**, Full-Stack AI Engineer (web · native Android), based in Lahore.
 
 Built with **React 19** and **Vite**, with no UI framework and no runtime dependencies beyond React. Every project, number and decision on the site comes from the source repos on [github.com/Ahmadhsn1](https://github.com/Ahmadhsn1).
 

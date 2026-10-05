@@ -15,10 +15,10 @@ export const absoluteUrl = (path) => `${site.url}${path}`
 const homeMeta = () => ({
 	slug: null,
 	path: '/',
-	title: `${site.name} | Software Engineer & Web Developer in ${site.city}`,
-	description: clip(`${site.name} (${site.githubHandle}): software engineer and web developer in ${site.location}. Builds AI products, web apps and Android apps. ${projects.length} shipped projects.`),
+	title: `${site.name} | ${site.role} in ${site.location}`,
+	description: clip(`${site.name} (${site.githubHandle}): ${site.headline.charAt(0).toLowerCase()}${site.headline.slice(1)}. Builds AI products, web apps and Android apps. ${projects.length} shipped projects.`),
 	image: '/og.jpg',
-	imageAlt: `${site.name}, software engineer in ${site.city}. I build AI products that survive real users.`,
+	imageAlt: `${site.name}, ${site.role} in ${site.city}. I build AI products that survive real users.`,
 })
 
 // Title, description and share image for a page. Used for both the prerendered HTML and in-page navigation.

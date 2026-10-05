@@ -26,13 +26,18 @@ How this site is built to be found, and what still has to happen off-site. Last 
 - **Title and description** come from `src/seo/meta.js`. Google may rewrite them to fit the query; keeping the title under about 60 characters and the description under about 155 gives the best chance they are used as written.
 - Changes only show after Google recrawls the page. Use Search Console → URL inspection → Request indexing (about 10 requests per day).
 
+## Positioning
+
+One role label, **Full-Stack AI Engineer**, defined once as `site.role` in `src/content/site.js` and used for the page title, header, hero, footer, structured data (`jobTitle`) and web manifest. The longer `site.headline` ("Full-stack engineer and AI engineer in Lahore, Pakistan") carries both search phrases separately for the description, `llms.txt` and structured data. Change the wording there, not in individual components. Two places cannot import it and must be edited by hand to match: the static fallback copy in `index.html`, and the text baked into `public/og.jpg`.
+
 ## Keyword map (honest targets)
 
 | Target | Page | Realistic horizon |
 | --- | --- | --- |
 | ahmad hassan, ahmadhsn1, ahmad hassan github | home | weeks |
-| ahmad hassan software engineer lahore | home | weeks |
-| ai engineer lahore, rag developer lahore, nestjs developer lahore, android developer lahore | home, case studies | 2–6 months |
+| ahmad hassan full stack ai engineer, ahmad hassan ai engineer lahore | home | weeks |
+| full stack ai engineer pakistan, full stack engineer lahore, ai engineer lahore | home | 2–6 months |
+| rag developer lahore, nestjs developer lahore, android developer lahore | home, case studies | 2–6 months |
 | web developer lahore, software engineer lahore | home | 6–12 months with reviews and links |
 | best web developer in lahore | n/a | needs reviews, directory listings and links; competitive |
 
