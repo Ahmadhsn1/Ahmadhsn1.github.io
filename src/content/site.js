@@ -16,8 +16,8 @@ export const site = {
 	phone: '+923256522522',
 	github: 'https://github.com/Ahmadhsn1',
 	githubHandle: 'Ahmadhsn1',
-	linkedin: 'https://www.linkedin.com/in/ahmad-hassan0099/',
-	linkedinHandle: 'ahmad-hassan0099',
+	linkedin: 'https://www.linkedin.com/in/ahmadhsn1/',
+	linkedinHandle: 'ahmadhsn1',
 }
 
 export const formatPhone = (phone) => phone.replace(/^(\+\d{2})(\d{3})(\d{3})(\d+)$/, '$1 $2 $3 $4')
