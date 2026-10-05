@@ -46,7 +46,7 @@ export function Header({onPalette, homeMounted}) {
 	return (
 		<header className={scrolled ? 'site-header is-scrolled' : 'site-header'}>
 			<div className="header-bar">
-				<SiteLink className="brand" to="/" onClick={closeMenu} aria-label={`${site.name}, home`}>
+				<SiteLink className="brand" to="/" onClick={closeMenu}>
 					<BrandMark />
 					<span className="brand-text">
 						<span className="brand-name">{site.name}</span>
@@ -61,7 +61,7 @@ export function Header({onPalette, homeMounted}) {
 					))}
 				</nav>
 				<div className="header-actions">
-					<button type="button" className="palette-trigger" onClick={onPalette} aria-label="Open command menu">
+					<button type="button" className="palette-trigger" onClick={onPalette} aria-label="Search ⌘K">
 						<span>Search</span>
 						<kbd>⌘K</kbd>
 					</button>

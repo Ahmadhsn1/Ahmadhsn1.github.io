@@ -26,8 +26,8 @@
 }
 
 .hero h1 .split-word > span {
-	animation: word-up 1.1s var(--ease) both;
-	animation-delay: calc(var(--i) * 70ms + 120ms);
+	animation: word-up .8s var(--ease) both;
+	animation-delay: calc(var(--i) * 45ms + 60ms);
 }
 
 @keyframes word-up {

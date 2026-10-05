@@ -8,8 +8,6 @@ import {fileURLToPath} from 'node:url'
 const dist = join(dirname(fileURLToPath(import.meta.url)), '..', 'dist')
 const failures = []
 const fail = (message) => failures.push(message)
-const warnings = []
-const warn = (message) => warnings.push(message)
 
 const exists = (path) =>
 	access(path).then(
@@ -48,7 +46,7 @@ for (const url of urls) {
 	if (!/<meta property="og:image" content="https:\/\//.test(html)) fail(`${file}: missing absolute og:image`)
 	const h1Count = (html.match(/<h1[\s>]/g) ?? []).length
 	if (h1Count > 1) fail(`${file}: ${h1Count} <h1> elements, expected one`)
-	if (h1Count === 0) (path ? warn : fail)(`${file}: no <h1>`)
+	if (h1Count === 0) fail(`${file}: no <h1>`)
 	if (/\bundefined\b|\[object Object\]/.test(html)) fail(`${file}: contains "undefined" or "[object Object]"`)
 
 	const blocks = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
@@ -65,8 +63,6 @@ for (const url of urls) {
 		if (!(await exists(join(dist, asset)))) fail(`${file}: references ${asset}, which is not in dist`)
 	}
 }
-
-for (const line of warnings) console.warn(`warning: ${line}`)
 
 if (failures.length) {
 	console.error(`Build verification failed (${failures.length}):\n${failures.map((line) => `  - ${line}`).join('\n')}`)

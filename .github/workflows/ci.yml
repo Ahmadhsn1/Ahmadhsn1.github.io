@@ -12,9 +12,9 @@ on:
         type: boolean
         default: false
     outputs:
-      stylesheet:
-        description: Hashed stylesheet filename of this build, used by deploy to confirm the live site serves it
-        value: ${{ jobs.build.outputs.stylesheet }}
+      bundle:
+        description: Hashed script filename of this build, used by deploy to confirm the live site serves it
+        value: ${{ jobs.build.outputs.bundle }}
 
 permissions:
   contents: read
@@ -47,9 +47,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     outputs:
-      stylesheet: ${{ steps.fingerprint.outputs.stylesheet }}
+      bundle: ${{ steps.fingerprint.outputs.bundle }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # sitemap lastmod is read from git history
 
       - uses: actions/setup-node@v4
         with:
@@ -65,7 +67,7 @@ jobs:
 
       - name: Fingerprint build
         id: fingerprint
-        run: echo "stylesheet=$(ls dist/assets | grep -E '^index-.*\.css$' | head -1)" >> "$GITHUB_OUTPUT"
+        run: echo "bundle=$(ls dist/assets | grep -E '^index-.*\.js$' | head -1)" >> "$GITHUB_OUTPUT"
 
       - name: Report bundle size
         run: |

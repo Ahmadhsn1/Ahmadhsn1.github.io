@@ -13,6 +13,17 @@ How this site is built to be found, and what still has to happen off-site. Last 
 | IndexNow ping after each deploy | `.github/workflows/deploy.yml` |
 | Public address (one line) | `VITE_SITE_URL` in `.env` |
 
+## Page speed (Core Web Vitals)
+
+Measured with Lighthouse on the production build, mobile profile: performance 92 (was 80), accessibility, best practices and SEO all 100; desktop performance 100. What got it there, and what keeps it there:
+
+- The stylesheet is inlined into every prerendered page and the two hero fonts are preloaded (`scripts/prerender.mjs`), so first paint does not wait on a second request.
+- The hero headline reveal finishes in about 1.2 seconds; a longer animation holds back Largest Contentful Paint because the headline is the largest element.
+- Images carry explicit dimensions, so layout shift is about zero.
+- `lastmod` in the sitemap and `dateModified` in structured data come from the last git commit that touched `src/`, `public/` or `index.html`, not from the build day. Search engines ignore a `lastmod` that changes on every deploy.
+
+Remaining opportunity: the single JavaScript bundle (about 93 kB gzipped) hydrates the whole page; splitting the below-the-fold sections would cut Total Blocking Time further but needs lazy hydration, so it is not worth the risk until the numbers regress.
+
 ## Principles
 
 - Every claim on the page is backed by a repository, a store listing or a number in the code. No "best developer" self-labelling: search engines and AI assistants weight what *other* sources say.
@@ -27,6 +38,8 @@ How this site is built to be found, and what still has to happen off-site. Last 
 - Changes only show after Google recrawls the page. Use Search Console → URL inspection → Request indexing (about 10 requests per day).
 
 ## Positioning
+
+Profile copy for LinkedIn, GitHub and the CV is in [BRAND.md](BRAND.md).
 
 One role label, **Full-Stack AI Engineer**, defined once as `site.role` in `src/content/site.js` and used for the page title, header, hero, footer, structured data (`jobTitle`) and web manifest. The longer `site.headline` ("Full-stack engineer and AI engineer in Lahore, Pakistan") carries both search phrases separately for the description, `llms.txt` and structured data. Change the wording there, not in individual components. Two places cannot import it and must be edited by hand to match: the static fallback copy in `index.html`, and the text baked into `public/og.jpg`.
 

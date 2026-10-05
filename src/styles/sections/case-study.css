@@ -126,7 +126,7 @@
 	color: var(--accent);
 }
 
-.case-intro h2 {
+.case-intro h1 {
 	margin-top: 12px;
 	font-size: clamp(40px, 5vw, 68px);
 	font-weight: 500;

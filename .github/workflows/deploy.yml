@@ -46,10 +46,10 @@ jobs:
       PAGE_URL: ${{ needs.deploy.outputs.page_url || format('https://{0}.github.io/', github.repository_owner) }}
     steps:
       # The CDN can lag the deploy by a few seconds, so retry until the live HTML references the exact
-      # stylesheet this commit built. That proves the new version, not a cached one, is being served.
+      # script bundle this commit built. That proves the new version, not a cached one, is being served.
       - name: Live site serves this build
         env:
-          EXPECTED: ${{ needs.ci.outputs.stylesheet }}
+          EXPECTED: ${{ needs.ci.outputs.bundle }}
         run: |
           test -n "$EXPECTED"
           for attempt in 1 2 3 4 5 6 7 8; do

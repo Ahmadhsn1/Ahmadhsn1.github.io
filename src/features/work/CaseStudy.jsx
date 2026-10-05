@@ -129,7 +129,7 @@ export function CaseStudy({slug, onOpen, onClose}) {
 				<div className="case-hero">
 					<div className="case-intro">
 						<p className="case-type">{project.type}</p>
-						<h2 id="case-title">{project.name}</h2>
+						<h1 id="case-title">{project.name}</h1>
 						<p className="case-tagline">{project.tagline}</p>
 						<dl className="case-facts">
 							<div>

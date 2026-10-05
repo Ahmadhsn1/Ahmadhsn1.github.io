@@ -35,6 +35,12 @@ const person = () => ({
 	email: `mailto:${site.email}`,
 	telephone: site.phone,
 	address: {'@type': 'PostalAddress', addressLocality: site.city, addressCountry: 'PK'},
+	hasOccupation: {
+		'@type': 'Occupation',
+		name: site.role,
+		occupationLocation: {'@type': 'City', name: site.city},
+		skills: ['Full-stack web development', 'LLM and RAG applications', 'Native Android development', 'Multi-tenant SaaS backends'].join(', '),
+	},
 	knowsAbout,
 	sameAs: [site.github, site.linkedin],
 })

@@ -1,7 +1,8 @@
 // Runs after the client and server builds. Turns the single-page app into real static pages:
 // every route gets its own HTML (content, title, description, canonical, share image and
 // structured data), plus sitemap.xml, robots.txt, llms.txt, 404.html and CNAME.
-import {mkdir, readFile, writeFile} from 'node:fs/promises'
+import {execFileSync} from 'node:child_process'
+import {mkdir, readdir, readFile, writeFile} from 'node:fs/promises'
 import {dirname, join} from 'node:path'
 import {fileURLToPath, pathToFileURL} from 'node:url'
 
@@ -10,8 +11,33 @@ const dist = join(root, 'dist')
 const server = await import(pathToFileURL(join(root, 'dist-ssr', 'entry-server.js')).href)
 const {renderPage, routes, pageMeta, schemaFor, absoluteUrl, site, projects, services, faq} = server
 
-const template = await readFile(join(dist, 'index.html'), 'utf8')
-const builtOn = new Date().toISOString().slice(0, 10)
+// The last day the site's code or content changed, not the build day, so sitemap lastmod and dateModified
+// only move when the site does (search engines ignore a lastmod that changes on every deploy).
+function lastChanged() {
+	try {
+		const day = execFileSync('git', ['log', '-1', '--format=%cs', '--', 'src', 'public', 'index.html'], {cwd: root, encoding: 'utf8'}).trim()
+		if (/^\d{4}-\d{2}-\d{2}$/.test(day)) return day
+	} catch {
+		// Not a git checkout: fall back to today.
+	}
+	return new Date().toISOString().slice(0, 10)
+}
+const builtOn = lastChanged()
+
+// Core Web Vitals: inline the stylesheet so first paint is not waiting on a second request, and start
+// fetching the two fonts the hero uses straight from the HTML instead of after the CSS is parsed.
+const assets = await readdir(join(dist, 'assets'))
+const fontPreloads = [/^geist-latin-wght-normal-.+\.woff2$/, /^instrument-serif-latin-400-italic-.+\.woff2$/]
+	.map((pattern) => assets.find((file) => pattern.test(file)))
+	.filter(Boolean)
+	.map((file) => `<link rel="preload" as="font" type="font/woff2" href="/assets/${file}" crossorigin />`)
+	.join('\n  ')
+
+let template = await readFile(join(dist, 'index.html'), 'utf8')
+const stylesheetTag = template.match(/<link rel="stylesheet"[^>]*href="(\/assets\/[^"]+\.css)"[^>]*>/)
+if (!stylesheetTag) throw new Error('prerender: built template has no stylesheet link')
+const css = await readFile(join(dist, stylesheetTag[1]), 'utf8')
+template = template.replace(stylesheetTag[0], () => `${fontPreloads}\n  <style>${css.replaceAll('</style', '<\\/style')}</style>`)
 
 const escapeAttr = (value) => value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 const escapeText = (value) => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
