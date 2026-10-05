@@ -7,7 +7,7 @@
 	--my: 0;
 	--screen: #ff6a3d;
 	width: 100%;
-	max-width: min(620px, 76svh);
+	max-width: 620px;
 	justify-self: end;
 	animation: rise 1.1s .2s var(--ease) both;
 }

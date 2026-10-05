@@ -5,7 +5,7 @@
 	grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
 	align-items: center;
 	gap: clamp(24px, 4vw, 64px);
-	min-height: 100svh;
+	min-height: min(100svh, 900px);
 	padding-block: 128px 64px;
 }
 
@@ -55,7 +55,7 @@
 }
 
 .hero h1 {
-	font-size: clamp(42px, 5.4vw, 82px);
+	font-size: clamp(42px, 5.4vw, 71px);
 	font-weight: 500;
 	line-height: .98;
 	letter-spacing: -.045em;
