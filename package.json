@@ -13,7 +13,8 @@
     "build": "vite build && vite build --ssr src/entry-server.jsx --outDir dist-ssr && node scripts/prerender.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
-    "check": "eslint . && npm run build"
+    "check": "eslint . && npm run build && npm run verify",
+    "verify": "node scripts/verify-build.mjs"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.3.0",

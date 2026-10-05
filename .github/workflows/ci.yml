@@ -1,0 +1,110 @@
+name: CI
+
+# Quality gate. Runs on every pull request and push, and is reused by deploy.yml so the
+# exact same checks guard what ships.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches-ignore: [main] # main is covered by deploy.yml, which calls this workflow
+  workflow_call:
+    inputs:
+      upload-pages-artifact:
+        description: Upload dist as the GitHub Pages artifact for the deploy job
+        type: boolean
+        default: false
+    outputs:
+      stylesheet:
+        description: Hashed stylesheet filename of this build, used by deploy to confirm the live site serves it
+        value: ${{ jobs.build.outputs.stylesheet }}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  NODE_VERSION: 22
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - run: npm ci
+      - run: npm run lint
+
+  build:
+    name: Build and verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      stylesheet: ${{ steps.fingerprint.outputs.stylesheet }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      # Fails the pipeline if a prerendered page loses its title, canonical, structured data or assets.
+      - name: Verify prerendered output
+        run: npm run verify
+
+      - name: Fingerprint build
+        id: fingerprint
+        run: echo "stylesheet=$(ls dist/assets | grep -E '^index-.*\.css$' | head -1)" >> "$GITHUB_OUTPUT"
+
+      - name: Report bundle size
+        run: |
+          {
+            echo '### Build output'
+            echo '```'
+            du -sh dist
+            find dist/assets -type f \( -name '*.js' -o -name '*.css' \) -printf '%s %f\n' | sort -rn | head -8 | awk '{printf "%7.1f kB  %s\n", $1/1024, $2}'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-pages-artifact@v3
+        if: inputs.upload-pages-artifact
+        with:
+          path: dist
+
+  audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      # Only what ships to users. Dev-tooling advisories are surfaced by Dependabot instead of blocking deploys.
+      - run: npm audit --omit=dev --audit-level=high
+
+  # Single stable check name to require in branch protection.
+  ci-ok:
+    name: CI passed
+    if: always()
+    needs: [lint, build, audit]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if any required job did not succeed
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1

@@ -3,45 +3,33 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
+# Never cancel a deploy mid-flight; a newer push simply queues behind it.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
-  build:
-    name: Lint and build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run build
-
-      - uses: actions/upload-pages-artifact@v3
-        if: github.event_name != 'pull_request'
-        with:
-          path: dist
+  ci:
+    name: CI
+    uses: ./.github/workflows/ci.yml
+    with:
+      upload-pages-artifact: true
 
   deploy:
     name: Deploy
-    needs: build
-    if: github.event_name != 'pull_request'
+    needs: ci
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -49,14 +37,58 @@ jobs:
       - id: deployment
         uses: actions/deploy-pages@v4
 
-      # Tells Bing, Yandex and other IndexNow search engines about every page right after a deploy.
-      - name: Notify IndexNow
-        continue-on-error: true
+  smoke-test:
+    name: Smoke test live site
+    needs: [ci, deploy]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      PAGE_URL: ${{ needs.deploy.outputs.page_url || format('https://{0}.github.io/', github.repository_owner) }}
+    steps:
+      # The CDN can lag the deploy by a few seconds, so retry until the live HTML references the exact
+      # stylesheet this commit built. That proves the new version, not a cached one, is being served.
+      - name: Live site serves this build
         env:
-          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
-          INDEXNOW_KEY: e280f8b4342d70583e86f664101f1dba
+          EXPECTED: ${{ needs.ci.outputs.stylesheet }}
         run: |
-          sleep 20
+          test -n "$EXPECTED"
+          for attempt in 1 2 3 4 5 6 7 8; do
+            if curl -fsS -H 'Cache-Control: no-cache' "$PAGE_URL" | grep -q "assets/$EXPECTED"; then
+              echo "Live site is serving $EXPECTED"
+              exit 0
+            fi
+            echo "Attempt $attempt: live site not serving $EXPECTED yet"
+            sleep 10
+          done
+          exit 1
+
+      - name: Key URLs respond
+        run: |
+          fail=0
+          for path in "" robots.txt sitemap.xml llms.txt; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "${PAGE_URL}${path}")
+            echo "$code  /${path}"
+            [ "$code" = 200 ] || fail=1
+          done
+          for url in $(curl -fsS "${PAGE_URL}sitemap.xml" | grep -o '<loc>[^<]*' | sed 's/<loc>//'); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "$url")
+            echo "$code  $url"
+            [ "$code" = 200 ] || fail=1
+          done
+          exit $fail
+
+  # Tells Bing, Yandex and other IndexNow search engines about every page right after a deploy.
+  indexnow:
+    name: Notify IndexNow
+    needs: [deploy, smoke-test]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    continue-on-error: true
+    env:
+      PAGE_URL: ${{ needs.deploy.outputs.page_url || format('https://{0}.github.io/', github.repository_owner) }}
+      INDEXNOW_KEY: e280f8b4342d70583e86f664101f1dba
+    steps:
+      - run: |
           host=$(echo "$PAGE_URL" | sed -E 's#https?://([^/]+)/?.*#\1#')
           urls=$(curl -fsS "${PAGE_URL}sitemap.xml" | grep -o '<loc>[^<]*' | sed 's/<loc>//' | jq -R . | jq -s .)
           jq -n --arg host "$host" --arg key "$INDEXNOW_KEY" --arg loc "${PAGE_URL}${INDEXNOW_KEY}.txt" --argjson urls "$urls" \
