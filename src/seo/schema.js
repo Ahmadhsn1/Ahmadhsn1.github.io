@@ -1,7 +1,9 @@
 import {faq} from '@/content/faq.js'
+import {livePosts} from '@/content/posts.js'
 import {stack} from '@/content/profile.js'
 import {projects} from '@/content/projects.js'
 import {site} from '@/content/site.js'
+import {isBlogKey, postFromKey} from '@/lib/blogRoute.js'
 import {absoluteUrl, pageMeta} from '@/seo/meta.js'
 
 const ids = {
@@ -61,8 +63,48 @@ const breadcrumbs = (items) => ({
 	itemListElement: items.map((item, index) => ({'@type': 'ListItem', position: index + 1, name: item.name, item: absoluteUrl(item.path)})),
 })
 
+function blogSchema(key, builtOn) {
+	const meta = pageMeta(key)
+	const url = absoluteUrl(meta.path)
+	const post = postFromKey(key)
+	const crumbs = [{name: site.name, path: '/'}, {name: 'Writing', path: '/blog/'}, ...(post ? [{name: post.title, path: meta.path}] : [])]
+	const page = post
+		? {
+				'@type': 'BlogPosting',
+				'@id': `${url}#post`,
+				mainEntityOfPage: url,
+				headline: post.title,
+				description: meta.description,
+				image: absoluteUrl(meta.image),
+				datePublished: post.published,
+				dateModified: post.updated,
+				author: {'@id': ids.person()},
+				publisher: {'@id': ids.person()},
+				keywords: post.tags.join(', '),
+				inLanguage: 'en',
+				isPartOf: {'@id': `${absoluteUrl('/blog/')}#blog`},
+				...(post.project ? {about: {'@type': 'CreativeWork', url: absoluteUrl(`/work/${post.project}/`)}} : {}),
+			}
+		: {
+				'@type': ['CollectionPage', 'Blog'],
+				'@id': `${url}#blog`,
+				url,
+				name: meta.title,
+				description: meta.description,
+				dateModified: builtOn,
+				author: {'@id': ids.person()},
+				isPartOf: {'@id': ids.website()},
+				blogPost: livePosts().map((item) => ({'@type': 'BlogPosting', headline: item.title, url: absoluteUrl(`/blog/${item.slug}/`), datePublished: item.published})),
+			}
+	return {
+		'@context': 'https://schema.org',
+		'@graph': [website(), person(), page, {...breadcrumbs(crumbs), '@id': `${url}#breadcrumb`}],
+	}
+}
+
 // Everything a page declares about itself, as one JSON-LD graph.
 export function schemaFor(slug, builtOn) {
+	if (isBlogKey(slug)) return blogSchema(slug, builtOn)
 	const meta = pageMeta(slug)
 	const project = projects.find((item) => item.slug === slug)
 

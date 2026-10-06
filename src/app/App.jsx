@@ -1,11 +1,13 @@
 import {Suspense, lazy, useEffect, useState} from 'react'
-import {useCaseRoute} from '@/hooks/useCaseRoute.js'
+import {currentPath, useCaseRoute} from '@/hooks/useCaseRoute.js'
+import {blogRouteFor} from '@/lib/blogRoute.js'
 import {ToastProvider} from '@/components/Toast.jsx'
 import {BackToTop} from '@/layout/BackToTop.jsx'
 import {Backdrop} from '@/layout/Backdrop.jsx'
 import {Footer} from '@/layout/Footer.jsx'
 import {Header} from '@/layout/Header.jsx'
 import {ScrollEffects} from '@/layout/ScrollEffects.jsx'
+import {BlogPage} from '@/features/blog/BlogPage.jsx'
 import {Contact} from '@/features/contact/Contact.jsx'
 import {Decisions} from '@/features/decisions/Decisions.jsx'
 import {Experience} from '@/features/experience/Experience.jsx'
@@ -24,11 +26,14 @@ const CommandPalette = lazy(() => loadCommandPalette().then((module) => ({defaul
 
 export default function App() {
 	const {slug, open, close} = useCaseRoute()
+	// Blog pages are separate prerendered pages: no home sections and no case study sheet.
+	const blog = blogRouteFor(currentPath())
+	const openCase = blog ? (next) => window.location.assign(`/work/${next}/`) : open
 	const [paletteOpen, setPaletteOpen] = useState(false)
 	// A case study URL is prerendered on its own, without the home sections behind it. They are
 	// added the first time the sheet closes (and stay mounted afterwards, so reopening is instant).
-	const [homeMounted, setHomeMounted] = useState(!slug)
-	if (!slug && !homeMounted) setHomeMounted(true)
+	const [homeMounted, setHomeMounted] = useState(!slug && !blog)
+	if (!slug && !blog && !homeMounted) setHomeMounted(true)
 
 	useEffect(() => {
 		const onKey = (event) => {
@@ -51,14 +56,15 @@ export default function App() {
 	}, [])
 
 	useEffect(() => {
-		applyHead(slug)
-	}, [slug])
+		applyHead(blog ? blog.key : slug)
+	}, [blog?.key, slug]) // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
 		<ToastProvider>
 			<Backdrop />
 			<ScrollEffects />
 			<Header onPalette={() => setPaletteOpen(true)} homeMounted={homeMounted} />
+			{blog && <BlogPage route={blog} />}
 			{homeMounted && (
 				<main id="home" inert={slug ? true : undefined}>
 					<Hero />
@@ -71,11 +77,11 @@ export default function App() {
 					<Contact />
 				</main>
 			)}
-			<Footer onPalette={() => setPaletteOpen(true)} onOpenCase={open} />
+			<Footer onPalette={() => setPaletteOpen(true)} onOpenCase={openCase} />
 			<BackToTop />
 			<Suspense fallback={null}>
-				{slug && <CaseStudy slug={slug} onOpen={open} onClose={close} />}
-				{paletteOpen && <CommandPalette open onClose={() => setPaletteOpen(false)} onOpenCase={open} />}
+				{slug && !blog && <CaseStudy slug={slug} onOpen={open} onClose={close} />}
+				{paletteOpen && <CommandPalette open onClose={() => setPaletteOpen(false)} onOpenCase={openCase} />}
 			</Suspense>
 		</ToastProvider>
 	)

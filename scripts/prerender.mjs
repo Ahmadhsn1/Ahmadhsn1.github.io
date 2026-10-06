@@ -6,10 +6,13 @@ import {mkdir, readdir, readFile, writeFile} from 'node:fs/promises'
 import {dirname, join} from 'node:path'
 import {fileURLToPath, pathToFileURL} from 'node:url'
 
+const escapeAttr = (value) => value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+const escapeText = (value) => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const dist = join(root, 'dist')
 const server = await import(pathToFileURL(join(root, 'dist-ssr', 'entry-server.js')).href)
-const {renderPage, routes, pageMeta, schemaFor, absoluteUrl, site, projects, services, faq} = server
+const {renderPage, routes, pageMeta, schemaFor, absoluteUrl, site, projects, services, faq, livePosts} = server
 
 // The last day the site's code or content changed, not the build day, so sitemap lastmod and dateModified
 // only move when the site does (search engines ignore a lastmod that changes on every deploy).
@@ -34,13 +37,13 @@ const fontPreloads = [/^geist-latin-wght-normal-.+\.woff2$/, /^instrument-serif-
 	.join('\n  ')
 
 let template = await readFile(join(dist, 'index.html'), 'utf8')
+const posts = livePosts()
+if (posts.length) template = template.replace('</head>', () => `<link rel="alternate" type="application/rss+xml" title="${escapeAttr(`${site.name}: writing`)}" href="/rss.xml" />\n</head>`)
 const stylesheetTag = template.match(/<link rel="stylesheet"[^>]*href="(\/assets\/[^"]+\.css)"[^>]*>/)
 if (!stylesheetTag) throw new Error('prerender: built template has no stylesheet link')
 const css = await readFile(join(dist, stylesheetTag[1]), 'utf8')
 template = template.replace(stylesheetTag[0], () => `${fontPreloads}\n  <style>${css.replaceAll('</style', '<\\/style')}</style>`)
 
-const escapeAttr = (value) => value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-const escapeText = (value) => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
 function swap(html, pattern, replacement) {
 	if (!pattern.test(html)) throw new Error(`prerender: template is missing ${pattern}`)
@@ -87,8 +90,18 @@ for (const route of routes()) {
 await write('404.html', swap(template, /<meta name="robots" content="[^"]*"\s*\/?>/, '<meta name="robots" content="noindex" />').replace(/<title>[^<]*<\/title>/, '<title>Page not found | Ahmad Hassan</title>'))
 
 // ── crawler files ───────────────────────────────────────────────────────
-const urls = routes().map((route) => `\t<url>\n\t\t<loc>${absoluteUrl(route.path)}</loc>\n\t\t<lastmod>${builtOn}</lastmod>\n\t</url>`)
+const urls = routes().map((route) => `\t<url>\n\t\t<loc>${absoluteUrl(route.path)}</loc>\n\t\t<lastmod>${route.lastmod ?? builtOn}</lastmod>\n\t</url>`)
 await write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`)
+if (posts.length) {
+	const items = posts.map(
+		(post) =>
+			`\t<item>\n\t\t<title>${escapeText(post.title)}</title>\n\t\t<link>${absoluteUrl(`/blog/${post.slug}/`)}</link>\n\t\t<guid isPermaLink="true">${absoluteUrl(`/blog/${post.slug}/`)}</guid>\n\t\t<pubDate>${new Date(`${post.published}T00:00:00Z`).toUTCString()}</pubDate>\n\t\t<description>${escapeText(post.description)}</description>\n\t</item>`
+	)
+	await write(
+		'rss.xml',
+		`<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n<channel>\n\t<title>${escapeText(site.name)}: writing</title>\n\t<link>${absoluteUrl('/blog/')}</link>\n\t<description>Technical write-ups on AI engineering by ${escapeText(site.name)}.</description>\n${items.join('\n')}\n</channel>\n</rss>\n`
+	)
+}
 await write('robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${absoluteUrl('/sitemap.xml')}\n`)
 
 const projectLines = projects.map((project) => `- [${project.name}](${absoluteUrl(`/work/${project.slug}/`)}): ${project.tagline} ${project.type}.`)
@@ -106,6 +119,7 @@ const llms = [
 	'## Projects',
 	...projectLines,
 	'',
+	...(posts.length ? ['## Writing', ...posts.map((post) => `- [${post.title}](${absoluteUrl(`/blog/${post.slug}/`)}): ${post.description}`), ''] : []),
 	'## Links',
 	`- [Portfolio](${absoluteUrl('/')})`,
 	`- [GitHub](${site.github})`,

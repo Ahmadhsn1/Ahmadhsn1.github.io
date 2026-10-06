@@ -1,5 +1,7 @@
+import {livePosts} from '@/content/posts.js'
 import {projects} from '@/content/projects.js'
 import {site} from '@/content/site.js'
+import {isBlogKey, postFromKey} from '@/lib/blogRoute.js'
 
 const DESCRIPTION_MAX = 155
 
@@ -21,8 +23,32 @@ const homeMeta = () => ({
 	imageAlt: `${site.name}, ${site.role} in ${site.city}. I build AI products that survive real users.`,
 })
 
+const blogMeta = (key) => {
+	const post = postFromKey(key)
+	if (!post) {
+		return {
+			slug: key,
+			path: '/blog/',
+			title: `Writing on AI Engineering | ${site.name}`,
+			description: `Technical write-ups by ${site.name} on RAG, LLM products, NestJS and Android, drawn from shipped projects.`,
+			image: '/og.jpg',
+			imageAlt: `${site.name}, ${site.role} in ${site.city}`,
+		}
+	}
+	return {
+		slug: key,
+		path: `/blog/${post.slug}/`,
+		title: `${post.title} | ${site.name}`,
+		description: clip(post.description),
+		image: post.image ?? '/og.jpg',
+		imageAlt: post.title,
+	}
+}
+
 // Title, description and share image for a page. Used for both the prerendered HTML and in-page navigation.
+// The key is a project slug, 'blog' or 'blog:<slug>'; anything else is the home page.
 export function pageMeta(slug) {
+	if (isBlogKey(slug)) return blogMeta(slug)
 	const project = projects.find((item) => item.slug === slug)
 	if (!project) return homeMeta()
 	return {
@@ -35,4 +61,9 @@ export function pageMeta(slug) {
 	}
 }
 
-export const routes = () => [{path: '/', slug: null}, ...projects.map((project) => ({path: `/work/${project.slug}/`, slug: project.slug}))]
+export const routes = () => [
+	{path: '/', slug: null},
+	...projects.map((project) => ({path: `/work/${project.slug}/`, slug: project.slug})),
+	...(livePosts().length ? [{path: '/blog/', slug: 'blog', lastmod: livePosts()[0].updated}] : []),
+	...livePosts().map((post) => ({path: `/blog/${post.slug}/`, slug: `blog:${post.slug}`, lastmod: post.updated})),
+]

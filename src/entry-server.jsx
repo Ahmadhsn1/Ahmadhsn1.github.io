@@ -17,6 +17,7 @@ export async function renderPage(path) {
 }
 
 export {faq} from '@/content/faq.js'
+export {livePosts} from '@/content/posts.js'
 export {projects} from '@/content/projects.js'
 export {services} from '@/content/services.js'
 export {site} from '@/content/site.js'

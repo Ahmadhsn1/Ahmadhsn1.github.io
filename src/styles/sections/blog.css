@@ -1,0 +1,141 @@
+/* ───────── Blog ───────── */
+
+#blog {
+	padding-block: clamp(112px, 14vw, 170px) clamp(64px, 8vw, 110px);
+}
+
+.blog-shell {
+	width: min(100% - var(--gutter) * 2, 760px);
+	margin-inline: auto;
+}
+
+.blog-shell h1 {
+	margin-block: 12px 14px;
+	font-size: clamp(32px, 5vw, 52px);
+	font-weight: 500;
+	letter-spacing: -.03em;
+	line-height: 1.1;
+}
+
+.blog-shell h2 {
+	margin-block: 44px 12px;
+	font-size: clamp(22px, 2.6vw, 28px);
+	font-weight: 500;
+	letter-spacing: -.02em;
+	line-height: 1.25;
+}
+
+.blog-shell p,
+.blog-shell li {
+	color: var(--text-soft);
+	font-size: 17px;
+	line-height: 1.75;
+}
+
+.blog-shell p {
+	margin-block: 0 16px;
+}
+
+.blog-shell ul:not(.blog-list) {
+	margin-block: 0 16px;
+	padding-left: 22px;
+}
+
+.blog-shell a {
+	color: var(--ember);
+	text-underline-offset: 3px;
+}
+
+.blog-shell code {
+	padding: 2px 6px;
+	border-radius: 6px;
+	background: var(--surface-strong);
+	color: var(--text);
+	font-family: var(--font-mono);
+	font-size: .9em;
+}
+
+.blog-code {
+	margin-block: 0 20px;
+	padding: 18px 20px;
+	overflow-x: auto;
+	border: 1px solid var(--line);
+	border-radius: var(--radius-sm);
+	background: var(--bg-raised);
+}
+
+.blog-code code {
+	padding: 0;
+	background: none;
+	font-size: 14px;
+	line-height: 1.65;
+	white-space: pre;
+}
+
+.blog-meta,
+.blog-crumbs {
+	color: var(--muted);
+	font-family: var(--font-mono);
+	font-size: 13px;
+}
+
+.blog-crumbs a {
+	color: var(--muted);
+}
+
+.blog-lede {
+	max-width: 60ch;
+}
+
+.blog-answer {
+	margin-block: 24px !important;
+	padding: 18px 20px;
+	border-left: 2px solid var(--ember);
+	border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+	background: var(--ember-soft);
+	color: var(--text) !important;
+}
+
+.blog-list {
+	margin: 36px 0 0;
+	padding: 0;
+	list-style: none;
+	border-top: 1px solid var(--line);
+}
+
+.blog-list li {
+	border-bottom: 1px solid var(--line);
+}
+
+.blog-list a {
+	display: block;
+	padding: 24px 4px;
+	color: inherit;
+	text-decoration: none;
+}
+
+.blog-list h2 {
+	margin: 0 0 8px;
+	transition: color .25s;
+}
+
+.blog-list a:hover h2 {
+	color: var(--ember);
+}
+
+.blog-project {
+	margin-top: 48px;
+	padding: 20px;
+	border: 1px solid var(--line-strong);
+	border-radius: var(--radius);
+	background: var(--surface);
+}
+
+.blog-project p {
+	margin-bottom: 6px;
+	color: var(--text);
+}
+
+.blog-contact {
+	margin-top: 32px !important;
+}

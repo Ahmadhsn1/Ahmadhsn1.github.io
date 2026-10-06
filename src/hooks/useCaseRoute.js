@@ -14,9 +14,12 @@ const readSlug = () => matchSlug(window.location.pathname) ?? legacyHashSlug()
 
 // The prerenderer sets the page being rendered, since there is no window on the server.
 let serverSlug = null
+let serverPath = '/'
 export const setServerPath = (path) => {
 	serverSlug = matchSlug(path)
+	serverPath = path
 }
+export const currentPath = () => (typeof window === 'undefined' ? serverPath : window.location.pathname)
 
 const listeners = new Set()
 const emit = () => listeners.forEach((listener) => listener())

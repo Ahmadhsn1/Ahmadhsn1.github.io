@@ -1,4 +1,5 @@
 import {useEffect, useState, useSyncExternalStore} from 'react'
+import {livePosts} from '@/content/posts.js'
 import {site} from '@/content/site.js'
 import {BrandMark} from '@/components/BrandMark.jsx'
 import {SiteLink} from '@/components/SiteLink.jsx'
@@ -59,6 +60,7 @@ export function Header({onPalette, homeMounted}) {
 							{link.label}
 						</SiteLink>
 					))}
+					{livePosts().length > 0 && <a href="/blog/">Writing</a>}
 				</nav>
 				<div className="header-actions">
 					<button type="button" className="palette-trigger" onClick={onPalette} aria-label="Search ⌘K">
