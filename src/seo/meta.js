@@ -40,7 +40,7 @@ const blogMeta = (key) => {
 		path: `/blog/${post.slug}/`,
 		title: `${post.title} | ${site.name}`,
 		description: clip(post.description),
-		image: post.image ?? '/og.jpg',
+		image: post.image ?? `/og/blog-${post.slug}.jpg`,
 		imageAlt: post.title,
 	}
 }

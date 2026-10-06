@@ -13,6 +13,10 @@ How this site is built to be found, and what still has to happen off-site. Last 
 | IndexNow ping after each deploy | `.github/workflows/deploy.yml` |
 | Public address (one line) | `VITE_SITE_URL` in `.env` |
 
+## Share cards (Open Graph images)
+
+`npm run og` (`scripts/generate-og.mjs`) draws every 1200x630 share card with satori: the home page (with the character), one per case study (real screenshot, or the engineering decisions for products without public screens) and one per blog post (title, tags, a code excerpt from the post). Run it after changing a title, a metric or a post, then commit `public/og.jpg` and `public/og/`. The cards are plain JPEGs, so the build does not depend on the script. Social networks cache cards: after a change, refresh them with the LinkedIn Post Inspector and the Facebook Sharing Debugger.
+
 ## Page speed (Core Web Vitals)
 
 Measured with Lighthouse on the production build, mobile profile: performance 92 (was 80), accessibility, best practices and SEO all 100; desktop performance 100. What got it there, and what keeps it there:
