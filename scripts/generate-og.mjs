@@ -1,7 +1,7 @@
 // Generates the 1200x630 share cards: the home page, one per case study (with a real screenshot) and one per
 // blog post (title, tags and a code excerpt). Run `npm run og` after changing a title, a metric or a post, then
 // commit the images in public/og/. They are plain JPEGs, so the build and the deploy do not depend on this script.
-import {existsSync} from 'node:fs'
+import {existsSync, readdirSync} from 'node:fs'
 import {mkdir, readFile, writeFile} from 'node:fs/promises'
 import {dirname, join} from 'node:path'
 import {fileURLToPath} from 'node:url'
@@ -122,6 +122,32 @@ async function shot(path, width = 1000) {
 	return dataUri(buffer, 'image/jpeg')
 }
 
+// Phone screens for share cards: public/images/projects/<slug>/og-phone-1.webp, og-phone-2.webp ... (left to right).
+async function phoneShots(slug) {
+	const dir = join(root, 'public', 'images', 'projects', slug)
+	if (!existsSync(dir)) return []
+	const files = readdirSync(dir).filter((file) => /^og-phone-\d+\.webp$/.test(file)).sort()
+	return Promise.all(files.map(async (file) => dataUri(await sharp(join(dir, file)).resize({width: 380}).jpeg({quality: 86}).toBuffer(), 'image/jpeg')))
+}
+
+// A fan of phone screens, the middle one on top.
+function phoneFan(shots, accent) {
+	const count = shots.length
+	const width = 190
+	const height = 338
+	const step = (520 - width) / (count - 1)
+	const middle = (count - 1) / 2
+	return shots
+		.map((src, index) => ({src, index, distance: Math.abs(index - middle)}))
+		.sort((a, b) => b.distance - a.distance)
+		.map(({src, index, distance}) =>
+			div(
+				{position: 'absolute', top: 128 + distance * 26, left: 640 + index * step, width, height, borderRadius: 22, overflow: 'hidden', border: `1px solid ${distance === 0 ? accent : '#ffffff33'}`, boxShadow: '0 30px 70px rgba(0,0,0,0.7)', transform: `rotate(${(index - middle) * 5}deg)`},
+				img(src, {width, height, objectFit: 'cover'})
+			)
+		)
+}
+
 const windowCard = (style, body) =>
 	div(
 		{position: 'absolute', flexDirection: 'column', overflow: 'hidden', borderRadius: 20, border: '1px solid #3a3a3f', backgroundColor: '#101013', boxShadow: '0 40px 90px rgba(0,0,0,0.65)', ...style},
@@ -135,10 +161,13 @@ async function projectCard(project) {
 	// Geist has no star glyph, so a rating reads "4.9" over "Google Play rating".
 	const metrics = project.metrics.slice(0, 3).map((metric) => (metric.value.includes('★') ? {value: metric.value.replace('★', ''), label: `${metric.label} rating`} : metric))
 	const points = project.engineering.slice(0, 3).map((item) => item.title)
+	const phones = await phoneShots(project.slug)
 	const visual = []
-	if (second && main)
+	if (phones.length >= 3) visual.push(...phoneFan(phones, accent))
+	else if (second && main)
 		visual.push(windowCard({top: 120, left: 690, width: 440, height: 300, transform: 'rotate(5deg)', opacity: 0.55}, img(second, {width: 440, height: 262, objectFit: 'cover', objectPosition: 'top left'})))
-	visual.push(
+	if (phones.length < 3)
+		visual.push(
 		main
 			? windowCard({top: 150, left: 640, width: 500, height: 330, transform: 'rotate(-3deg)'}, img(main, {width: 500, height: 292, objectFit: 'cover', objectPosition: 'top left'}))
 			: windowCard(
