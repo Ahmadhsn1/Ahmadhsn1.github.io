@@ -11,6 +11,13 @@ import {accentFor, formatDate, headingId, readingMinutes, relatedPosts} from '@/
 function Inline({text}) {
 	return text.split(/(\[[^\]]+\]\([^)]+\)|`[^`]+`)/).map((part, index) => {
 		const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
+		if (link && /^https?:/.test(link[2])) {
+			return (
+				<a key={index} href={link[2]} target="_blank" rel="noreferrer noopener">
+					{link[1]}
+				</a>
+			)
+		}
 		if (link) return <a key={index} href={link[2]}>{link[1]}</a>
 		if (part.startsWith('`')) return <code key={index}>{part.slice(1, -1)}</code>
 		return <Fragment key={index}>{part}</Fragment>

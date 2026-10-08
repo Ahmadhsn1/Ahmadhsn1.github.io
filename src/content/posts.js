@@ -10,6 +10,406 @@
 
 export const posts = [
 	{
+		slug: 'azure-openai-outage-keep-ai-app-running',
+		draft: false,
+		title: 'Azure OpenAI Outage: Keep Your AI App Running',
+		description: 'A nearly six hour Azure OpenAI outage on 29 September 2026 is a reminder that LLM APIs fail. Timeouts, circuit breakers and fallbacks, with code.',
+		published: '2026-10-08',
+		updated: '2026-10-08',
+		project: 'copper-larder',
+		tags: ['Azure OpenAI', 'LLM reliability', 'Node.js', 'Outages'],
+		answer:
+			'Treat your LLM provider like any dependency that will eventually fail. Set strict timeouts, stop calling a provider that is clearly down with a circuit breaker, and keep a second route ready, whether that is another region, another provider or an honest degraded mode. Retries alone will not save you from an outage that lasts six hours.',
+		sections: [
+			{
+				heading: 'What happened on 29 September',
+				blocks: [
+					{
+						type: 'p',
+						text: 'According to a [postmortem write up by Artur Markus](https://www.arturmarkus.com/postmortem-azures-sweden-central-ai-outage-and-the-18-region-gateway-failure-24-hours-later/), Azure OpenAI Service, Foundry Agent Service, Foundry Models and Cognitive Services in the Sweden Central region failed for 5 hours and 55 minutes on 29 September 2026, from 10:03 to 15:58 UTC. Customers saw intermittent request failures, higher latency and HTTP 5XX errors against model and data plane APIs. Microsoft described it as a platform issue without technical detail.',
+					},
+					{
+						type: 'p',
+						text: 'The same write up describes a separate networking incident the next day that touched gateways in 18 regions. It says the duration and cause come from third parties and are not confirmed by Microsoft, so I treat that part as unconfirmed. It also notes that as of 6 October no public post incident review existed for either event. For the confirmed record, read the official [Azure status history](https://azure.status.microsoft/en-us/status/history) rather than anyone’s summary, including mine.',
+					},
+					{
+						type: 'p',
+						text: 'The details of this incident matter less than its shape. A model API in one region was unusable for most of a working day. If your product calls an LLM on the critical path, that is your outage too, and the question is what your code does during hour three.',
+					},
+				],
+			},
+			{
+				heading: 'Why retries are the wrong tool here',
+				blocks: [
+					{
+						type: 'p',
+						text: 'Retries are built for blips: a dropped connection, a single overloaded node. Against a six hour incident they do harm. Every user request waits through several failed attempts, your workers pile up, your queue grows, and when the provider recovers it receives a flood.',
+					},
+					{
+						type: 'p',
+						text: 'The first step is to stop treating all errors the same. I sort them into three groups, because each one has a different correct reaction.',
+					},
+					{
+						type: 'list',
+						items: [
+							'A rate limit (HTTP 429) means not now. Reschedule the work instead of burning attempts, as described in [Do Not Retry an LLM Rate Limit, Reschedule It](/blog/llm-rate-limits-bullmq-reschedule/).',
+							'A client error (most other 4XX) means your request is wrong. Retrying changes nothing. Fix the request.',
+							'An outage signal, meaning a timeout, a connection reset or a 5XX, means the provider is unhealthy. This is the group that needs a breaker and a fallback.',
+						],
+					},
+				],
+			},
+			{
+				heading: 'Timeouts come first',
+				blocks: [
+					{
+						type: 'p',
+						text: 'Without a timeout, an LLM call can hang for minutes and hold a connection, a worker and a user. Set one on every call, and choose it from what a healthy call looks like for your use case. A short classification should answer in a few seconds. A long generation needs a longer limit, and when you stream it is worth watching time to first token separately, because that is the number that tells you the provider is struggling.',
+					},
+					{
+						type: 'code',
+						lang: 'js',
+						text: `const isOutage = (error) =>
+  error.name === 'TimeoutError' ||
+  error.code === 'ECONNRESET' ||
+  (error.status >= 500 && error.status < 600)
+
+export async function callProvider(provider, messages) {
+  const signal = AbortSignal.timeout(provider.timeoutMs)
+  return provider.chat(messages, { signal })
+}`,
+					},
+				],
+			},
+			{
+				heading: 'A circuit breaker in twenty lines',
+				blocks: [
+					{
+						type: 'p',
+						text: 'A circuit breaker remembers that a dependency is failing and stops sending it traffic for a while. That protects your users from waiting on a dead service and protects the service from a retry storm when it comes back.',
+					},
+					{
+						type: 'code',
+						lang: 'js',
+						text: `export class CircuitBreaker {
+  constructor({ threshold = 5, coolDownMs = 30000 } = {}) {
+    this.threshold = threshold
+    this.coolDownMs = coolDownMs
+    this.failures = 0
+    this.openUntil = 0
+  }
+
+  allows(now = Date.now()) {
+    return now >= this.openUntil
+  }
+
+  success() {
+    this.failures = 0
+    this.openUntil = 0
+  }
+
+  failure(now = Date.now()) {
+    this.failures += 1
+    if (this.failures >= this.threshold) {
+      this.openUntil = now + this.coolDownMs
+    }
+  }
+}`,
+					},
+					{
+						type: 'p',
+						text: 'After the cool down, allows returns true again and the next request acts as a probe. If it fails, the failure count is still above the threshold, so the breaker opens again straight away. If it succeeds, everything resets. That is the whole idea, and it is enough for most services.',
+					},
+				],
+			},
+			{
+				heading: 'A fallback chain',
+				blocks: [
+					{
+						type: 'p',
+						text: 'With timeouts and a breaker per provider, the fallback is a loop over an ordered list. Each entry has a name, a chat function, a timeout and its own breaker.',
+					},
+					{
+						type: 'code',
+						lang: 'js',
+						text: `export async function askWithFallback(providers, messages) {
+  let lastError
+
+  for (const provider of providers) {
+    if (!provider.breaker.allows()) continue
+    try {
+      const reply = await callProvider(provider, messages)
+      provider.breaker.success()
+      return { reply, provider: provider.name }
+    } catch (error) {
+      if (!isOutage(error)) throw error
+      provider.breaker.failure()
+      lastError = error
+    }
+  }
+
+  throw lastError ?? new Error('Every provider is unavailable')
+}`,
+					},
+					{
+						type: 'p',
+						text: 'Two cautions. A second region protects you from a regional failure like Sweden Central, but not from a problem that spans the provider, so for the critical path a second provider is the stronger choice. And a fallback model is not a drop in copy. Prompts that work well on one model can behave differently on another, so keep a small set of real examples and run it against every provider you list. A fallback you have never tested is a hope, not a plan.',
+					},
+					{
+						type: 'p',
+						text: 'This is easier when your code never imports a vendor SDK directly. If each provider is an adapter behind one small interface, adding a second is an afternoon of work. The same design is used in the booking assistant described in [An AI Booking Assistant That Cannot Double Book](/blog/ai-booking-assistant-tool-calling/).',
+					},
+				],
+			},
+			{
+				heading: 'Decide what failure looks like for the user',
+				blocks: [
+					{
+						type: 'p',
+						text: 'When every route is down, the worst outcome is a spinner that never ends. Decide in advance. Background work can go into a queue and run later. A chat can say plainly that the assistant is unavailable and offer another way to reach you. Something that has a cached answer can serve it, clearly marked.',
+					},
+					{
+						type: 'p',
+						text: 'The Copper Larder chatbot takes this approach: when the model is down, rate limited or missing its key, every path still returns a warm, on brand message and a callback card, so a visitor can still leave a number. The design is covered in the [Copper Larder case study](/work/copper-larder/).',
+					},
+				],
+			},
+			{
+				heading: 'Test the failure before it finds you',
+				blocks: [
+					{
+						type: 'p',
+						text: 'You do not need a real outage to rehearse one. Write a fake provider that returns a 503, another that hangs past its timeout, and a healthy one, then assert how your code behaves.',
+					},
+					{
+						type: 'code',
+						lang: 'js',
+						text: `import test from 'node:test'
+import assert from 'node:assert'
+
+const broken = {
+  name: 'broken',
+  timeoutMs: 100,
+  breaker: new CircuitBreaker({ threshold: 1 }),
+  chat: async () => { throw Object.assign(new Error('down'), { status: 503 }) },
+}
+const healthy = {
+  name: 'healthy',
+  timeoutMs: 100,
+  breaker: new CircuitBreaker(),
+  chat: async () => 'ok',
+}
+
+test('falls back when the first provider is down', async () => {
+  const result = await askWithFallback([broken, healthy], [])
+  assert.equal(result.provider, 'healthy')
+  assert.equal(broken.breaker.allows(), false)
+})`,
+					},
+					{
+						type: 'p',
+						text: 'Run something like this in CI, and once in a while rehearse it for real by pointing a staging environment at a provider that always fails. You will find the one forgotten call that has no timeout.',
+					},
+				],
+			},
+			{
+				heading: 'A short checklist',
+				blocks: [
+					{
+						type: 'list',
+						items: [
+							'Every LLM call has a timeout, and the limit matches what a healthy call looks like.',
+							'Rate limits, client errors and outage signals are handled differently.',
+							'Each provider has a circuit breaker, and the order of providers is explicit.',
+							'The fallback has been tested against your own prompts, not just reached.',
+							'There is a written answer to what the user sees when everything is down.',
+						],
+					},
+				],
+			},
+		],
+	},
+
+	{
+		slug: 'rtx-spark-local-ai-developers',
+		draft: false,
+		title: 'RTX Spark and Local AI: A Developer Briefing',
+		description: 'Microsoft’s Surface Laptop Ultra brings Nvidia RTX Spark and 128 GB of unified memory. What local AI means for developers, with the memory math.',
+		published: '2026-10-07',
+		updated: '2026-10-07',
+		project: null,
+		tags: ['Local AI', 'Nvidia', 'Windows', 'LLM inference'],
+		answer:
+			'Microsoft’s Surface Laptop Ultra, announced on 7 October 2026, puts Nvidia’s RTX Spark and up to 128 GB of unified memory in a laptop, so large models can run on the device. For developers the useful question is which requests should stay local. That depends on memory math, latency, privacy and having one interface in your code that can talk to both a local model and a cloud one.',
+		sections: [
+			{
+				heading: 'What Microsoft and Nvidia announced',
+				blocks: [
+					{
+						type: 'p',
+						text: 'At its 7 October event in San Francisco, Microsoft introduced the Surface Laptop Ultra, built around Nvidia’s RTX Spark. Coverage from [BGR](https://www.bgr.com/2279488/windows-surface-event-october-2026-liveblog-updates/), [Notebookcheck](https://www.notebookcheck.net/Microsoft-Surface-Laptop-Ultra-debuts-with-RTX-Spark-128-GB-unified-memory-and-2-599-starting-price.1418420.0.html) and [Engadget](https://engadget.com/2279642/microsoft-windows-surface-event-2026-live-blog-nvidia-rtx-spark-laptop-ultra) agrees on the main points.',
+					},
+					{
+						type: 'list',
+						items: [
+							'RTX Spark combines a Grace CPU with a Blackwell GPU that has 6,144 cores, and the CPU and GPU share one pool of unified memory, up to 128 GB.',
+							'The Surface Laptop Ultra starts at $2,599 with 24 GB of memory, with preorders open and availability from 16 October. A Surface RTX Spark Dev Box is listed at $5,999.',
+							'Laptops from Lenovo, Asus, Dell, MSI and HP with RTX Spark were also announced, shipping from 16 October.',
+							'Windows gets hybrid behaviour that decides between local and cloud models, Copilot access to local files with permission, and Microsoft Execution Containers to contain what agents can do.',
+						],
+					},
+					{
+						type: 'p',
+						text: 'A few details differ between outlets, such as which specific open models were named and how much RAM they need, so I am relying only on the hardware and platform points that several sources agree on. Check Microsoft’s own page before you spend money, and wait for independent benchmarks.',
+					},
+				],
+			},
+			{
+				heading: 'Why unified memory is the headline',
+				blocks: [
+					{
+						type: 'p',
+						text: 'Running a language model locally is mostly a question of whether the weights fit in memory the GPU can reach. On a typical laptop with a discrete GPU, that memory is small, and the model has to be squeezed to fit. With unified memory, the CPU and GPU draw from the same pool, so a 128 GB machine can hold models that used to need a workstation.',
+					},
+					{
+						type: 'p',
+						text: 'Capacity is only half the story. How fast the memory can feed the chip decides how many tokens per second you get, and I have not seen verified bandwidth or throughput numbers yet. That is why I would not buy on the keynote alone.',
+					},
+				],
+			},
+			{
+				heading: 'The memory math',
+				blocks: [
+					{
+						type: 'p',
+						text: 'You can estimate whether a model fits with one line of arithmetic. The weights take roughly parameters times bits per weight, divided by eight.',
+					},
+					{
+						type: 'code',
+						lang: 'js',
+						text: `// Weights only, in gigabytes, for a model with paramsBillions parameters.
+export const weightsGB = (paramsBillions, bitsPerWeight) =>
+  (paramsBillions * bitsPerWeight) / 8
+
+weightsGB(8, 4)    // 4
+weightsGB(70, 4)   // 35
+weightsGB(70, 16)  // 140
+weightsGB(675, 4)  // 337.5`,
+					},
+					{
+						type: 'list',
+						items: [
+							'An 8 billion parameter model at 4 bits per weight needs about 4 GB. It fits almost anywhere.',
+							'A 70 billion parameter model at 4 bits needs about 35 GB. It fits on a 128 GB machine with room to spare, and not on a 24 GB one.',
+							'The same 70 billion model at 16 bits needs about 140 GB. It does not fit on 128 GB.',
+							'A sparse mixture of experts model is the trap. [Mistral Large 3](https://intuitionlabs.ai/articles/mistral-large-3-moe-llm-explained) has 675 billion parameters in total but only 41 billion active per token. Active parameters set the speed, while total parameters set the memory, so at 4 bits it needs about 338 GB resident. It will not run on a laptop however few experts fire.',
+						],
+					},
+					{
+						type: 'p',
+						text: 'Treat the result as a floor. The attention cache grows with context length and with each concurrent session, and the runtime needs working space. As a starting guess I leave about 20 percent of memory free, then measure with the real context length my application uses.',
+					},
+				],
+			},
+			{
+				heading: 'Local or cloud: write the rule down',
+				blocks: [
+					{
+						type: 'p',
+						text: 'Having the hardware does not mean everything should run on it. I decide per request type, using five questions.',
+					},
+					{
+						type: 'list',
+						items: [
+							'Privacy. Does the input contain data that should not leave the device?',
+							'Latency and offline use. Does the feature need to respond instantly or work without a connection?',
+							'Cost. Is it called so often that per token pricing adds up?',
+							'Quality ceiling. Does the task need the strongest model available, or is a good enough one fine?',
+							'Context and load. Does it need a very long context, or will traffic spike beyond one machine?',
+						],
+					},
+					{
+						type: 'p',
+						text: 'In general, private documents, autocomplete, classification and first drafts are good local candidates. The hardest reasoning, very long contexts and bursty workloads still belong in the cloud. Most real products will use both, which is why the next part matters.',
+					},
+				],
+			},
+			{
+				heading: 'One interface, two backends',
+				blocks: [
+					{
+						type: 'p',
+						text: 'Most local runtimes expose an OpenAI compatible HTTP API. The llama.cpp server, for example, serves chat completions on a local port, so the client code is the same and only the base URL changes. Put that behind one function and the rest of your app never needs to know where a request ran.',
+					},
+					{
+						type: 'code',
+						lang: 'js',
+						text: `const backends = {
+  local: { baseUrl: 'http://localhost:8080/v1', model: 'local' },
+  cloud: { baseUrl: process.env.CLOUD_BASE_URL, model: process.env.CLOUD_MODEL, key: process.env.CLOUD_KEY },
+}
+
+async function chat(backend, messages, timeoutMs) {
+  const response = await fetch(backend.baseUrl + '/chat/completions', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      ...(backend.key ? { authorization: 'Bearer ' + backend.key } : {}),
+    },
+    body: JSON.stringify({ model: backend.model, messages }),
+    signal: AbortSignal.timeout(timeoutMs),
+  })
+  if (!response.ok) throw Object.assign(new Error('request failed'), { status: response.status })
+  const data = await response.json()
+  return data.choices[0].message.content
+}
+
+export async function complete(messages, { private: isPrivate = false } = {}) {
+  if (isPrivate) return chat(backends.local, messages, 60000) // never leaves the device
+  try {
+    return await chat(backends.local, messages, 8000)
+  } catch {
+    return chat(backends.cloud, messages, 30000)
+  }
+}`,
+					},
+					{
+						type: 'p',
+						text: 'Notice the private flag. Falling back to the cloud when the local model is slow is a convenience for ordinary requests. For sensitive input it would defeat the point, so those calls wait for the local model and fail instead of leaving the machine.',
+					},
+				],
+			},
+			{
+				heading: 'Agents on a laptop need walls',
+				blocks: [
+					{
+						type: 'p',
+						text: 'Microsoft says Copilot can now read local files with permission and take actions on the machine, and that Microsoft Execution Containers will contain what agents are allowed to do. That is the right instinct. An agent with access to your files is a program that follows instructions from text it reads, and some of that text will be hostile.',
+					},
+					{
+						type: 'p',
+						text: 'Whatever platform you build on, give each tool the least access it needs, validate every argument in code, and require confirmation for anything that changes something. The same discipline applies to cloud agents, as in [An AI Booking Assistant That Cannot Double Book](/blog/ai-booking-assistant-tool-calling/).',
+					},
+				],
+			},
+			{
+				heading: 'What I would do this week',
+				blocks: [
+					{
+						type: 'list',
+						items: [
+							'Run the memory math for the models you actually want to use, with your real context length.',
+							'Put local and cloud behind one function so you can move requests either way.',
+							'Decide which request types must never leave the device.',
+							'Wait for independent tokens per second numbers before buying hardware on a keynote.',
+						],
+					},
+				],
+			},
+		],
+	},
+
+	{
 		slug: 'vibe-coding-vs-learning-to-code-freshers',
 		draft: false,
 		title: 'Vibe Coding vs Learning to Code: Freshers Guide',

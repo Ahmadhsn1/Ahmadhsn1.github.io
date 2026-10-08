@@ -19,6 +19,8 @@ Each post must leave the reader able to do something: working code, a test to ru
 
 | Post | Primary query | Related queries | Intent | Source project |
 | --- | --- | --- | --- | --- |
+| azure-openai-outage-keep-ai-app-running | azure openai outage | azure openai down, llm fallback strategy, ai api outage what to do, circuit breaker llm, multi provider llm | Developer or founder running an LLM app on the critical path | The Copper Larder |
+| rtx-spark-local-ai-developers | rtx spark local ai | surface laptop ultra, run llm locally memory requirements, unified memory llm, windows ai agents, local llm vs cloud | Developer deciding whether local AI hardware matters | None (news briefing) |
 | vibe-coding-vs-learning-to-code-freshers | vibe coding vs learning to code | should i still learn to code in 2026, will ai replace junior developers, learn programming with ai, vibe coding problems in production, freshers roadmap | Fresher or career changer deciding how to learn | None (general guide, links to the other posts) |
 | rag-tenant-isolation-vector-index | multi tenant rag isolation | vector search filter by user id, atlas vector search prefilter, rag data leak between users | Developer building a multi user RAG app | Retrivo Vault |
 | ai-booking-assistant-tool-calling | llm tool calling booking assistant | chatbot book appointments llm, function calling business logic, llm agent otp confirmation | Developer or founder adding an AI assistant to a product | Aria |
