@@ -11,6 +11,165 @@
 
 export const posts = [
 	{
+		slug: 'grok-bot-use-cases-automate-work',
+		draft: false,
+		title: 'Grok Bot Use Cases: How People Automate Work',
+		description: 'What Grok Bot is, eight workflows people have built with it, and a simple way to choose tasks worth automating, with approval steps for sensitive actions.',
+		published: '2026-10-12',
+		publishAt: '2026-10-12T09:00:00+05:00',
+		updated: '2026-10-12',
+		project: null,
+		tags: ['Grok Bot', 'AI agents', 'Automation', 'Productivity'],
+		answer:
+			'Grok Bot lets you create named AI teammates that connect to your email, calendar, chat and code tools and run on a schedule. The workflows that work best share a shape: one narrow job, a recurring trigger, output you can check, and an approval step before anything is sent, paid or deleted. Pick tasks by that shape and the same approach works with any agent.',
+		sections: [
+			{
+				heading: 'What Grok Bot is',
+				blocks: [
+					{
+						type: 'p',
+						text: 'Grok Bot is an agent feature in the Grok product, introduced in August 2026 according to [Wikipedia’s Grok entry](https://en.wikipedia.org/wiki/Grok_(chatbot)). In a [write up on ChatPRD](https://www.chatprd.ai/how-i-ai/grok-bot-agent-templates-and-workflows) dated 3 September 2026, Claire Vo describes how it works. You create a bot by giving it a name, and the platform infers its purpose from that name. Each bot has its own virtual machine where it can run code, install software and log in to websites. Plugins connect it to tools such as Gmail, Calendar, GitHub, Sentry and Slack, and routines, which are simply scheduled jobs, make it work without being prompted.',
+					},
+					{
+						type: 'p',
+						text: 'xAI’s release notes, as collected by [Releasebot](https://releasebot.io/updates/xai), list Team Bots from 28 September 2026, which let a team share one bot with the same context, tools, credentials and memory across Slack and connected applications. Details can change quickly, so check xAI’s own documentation for current features and limits before you build anything.',
+					},
+				],
+			},
+			{
+				heading: 'Eight workflows people have built',
+				blocks: [
+					{
+						type: 'p',
+						text: 'The ChatPRD article is a useful catalogue because each example is a real setup with a clear job. Here is the set, in my words.',
+					},
+					{
+						type: 'list',
+						items: [
+							'Chief acts as a chief of staff. It sweeps six email inboxes, several Slack workspaces and calendars every hour between 6 AM and 9 PM, and it learned the owner’s writing voice by analysing their email.',
+							'TradBot coordinates a family. It assembles a daily newspaper for the kitchen table, handles the afternoon pickup logistics at 2:30 PM and summarises weekend sports from school emails and the calendar.',
+							'LGTM looks after pull requests. It reviews them daily, rebases branches and applies code feedback, using GitHub, Slack and cloud coding agents.',
+							'Lockdown watches SOC 2 compliance. It logs in to the compliance dashboard, triages vulnerabilities and manages quarterly reminders.',
+							'Holly Helpdesk runs customer support from Intercom, email and Stripe. It sweeps the inbox hourly, and refund requests come with approval buttons for a human to press.',
+							'Penny Pincher reads email receipts to find subscriptions worth cancelling, suggests what to negotiate and warns before free trials end.',
+							'ShopZilla searches retail websites for products that match specific dimensions and researches prices.',
+							'Sylvie Style studies a Pinterest style board and sends curated sale links every Monday at 8 AM.',
+						],
+					},
+					{
+						type: 'p',
+						text: 'The same site collects more [Grok workflows](https://www.chatprd.ai/how-i-ai/workflows/tool/grok), including turning voice memos into interactive prototypes, a bot that handles repetitive Figma production tasks, a personal website that updates itself with AI generated art, and a way to find early talent on X and YouTube with manual verification.',
+					},
+				],
+			},
+			{
+				heading: 'What the good ones have in common',
+				blocks: [
+					{
+						type: 'p',
+						text: 'Read the list again and a pattern appears. None of these bots tries to run a whole business. Each has one narrow job, a recurring trigger, and an output a person can glance at and judge. The inbox sweeps happen on a clock. The shopping bot returns links, not purchases. The support bot resolves what it can and gives a human a button for the sensitive step, which is the refund.',
+					},
+					{
+						type: 'p',
+						text: 'That is also a good template for any agent, whichever product you use. Narrow scope keeps the instructions simple. A schedule removes the need to remember to ask. Checkable output makes review fast. And an approval step on actions that cannot be undone keeps a mistake small.',
+					},
+				],
+			},
+			{
+				heading: 'How to choose what to automate',
+				blocks: [
+					{
+						type: 'p',
+						text: 'Not every task deserves a bot. Four questions sort candidates quickly. How often does it happen? How long does it take each time? Can you tell at a glance whether the result is right? Can the action be undone if it is wrong? A small score makes the comparison concrete.',
+					},
+					{
+						type: 'code',
+						lang: 'js',
+						text: `// Hours saved per month if the task were fully automated,
+// reduced when the result is hard to check or cannot be undone.
+export function automationScore(task) {
+  const hoursPerMonth = (task.timesPerWeek * 4 * task.minutesEach) / 60
+  let score = hoursPerMonth
+  if (!task.outputCheckable) score *= 0.3
+  if (!task.reversible) score *= 0.2
+  return Math.round(score * 10) / 10
+}
+
+automationScore({ timesPerWeek: 20, minutesEach: 5, outputCheckable: true, reversible: true })  // 6.7  inbox triage drafts
+automationScore({ timesPerWeek: 5, minutesEach: 10, outputCheckable: true, reversible: false }) // 0.7  issuing refunds
+automationScore({ timesPerWeek: 1, minutesEach: 45, outputCheckable: false, reversible: true }) // 0.9  weekly strategy memo`,
+					},
+					{
+						type: 'p',
+						text: 'The numbers are only a way to argue with yourself. They say that frequent, checkable, reversible work such as sorting an inbox into drafts is the best place to start, and that refunds are better handled with a human in the loop even if the time saved looks attractive.',
+					},
+				],
+			},
+			{
+				heading: 'Put approval where it matters',
+				blocks: [
+					{
+						type: 'p',
+						text: 'The support example above shows the rule in practice. Let the bot read, summarise and draft freely. Make it ask before it sends something to an outside person, spends money or deletes anything. Writing the rule as a small policy table also gives you one place to change it.',
+					},
+					{
+						type: 'code',
+						lang: 'js',
+						text: `const policy = {
+  read: 'auto',
+  draft: 'auto',
+  updateInternal: 'auto',
+  sendExternal: 'approve',
+  spendMoney: 'approve',
+  delete: 'approve',
+}
+
+// Anything unknown needs approval, so a new kind of action is safe by default.
+export const needsApproval = (actionType) => (policy[actionType] ?? 'approve') === 'approve'
+
+needsApproval('draft')        // false
+needsApproval('sendExternal') // true
+needsApproval('somethingNew') // true`,
+					},
+				],
+			},
+			{
+				heading: 'Set it up in a way you can undo',
+				blocks: [
+					{
+						type: 'list',
+						items: [
+							'Start with one connection, for example a single inbox, and add more only after the first one behaves.',
+							'Use read access first. Add the ability to send or change things later, one permission at a time.',
+							'For the first week, read every output before you rely on it, and keep a short note of what it got wrong.',
+							'Give each bot its own name and one job, as in the examples, so you can see what it did and switch it off without affecting anything else.',
+							'Watch the schedule. An hourly sweep that finds nothing is cheap, but an unnecessary one still costs time to review and may cost usage.',
+						],
+					},
+				],
+			},
+			{
+				heading: 'A four week plan for a small business',
+				blocks: [
+					{
+						type: 'list',
+						items: [
+							'Week 1. Choose one task using the score above. Inbox triage that produces draft replies is a safe first pick.',
+							'Week 2. Run it on a schedule and compare its drafts with what you would have written.',
+							'Week 3. Add the approval step for anything that leaves the building, and write down the rules it should follow.',
+							'Week 4. Count the time saved and the corrections you made. If the numbers are good, add a second bot with a different job.',
+						],
+					},
+					{
+						type: 'p',
+						text: 'If you build software, the same ideas apply to coding agents, which I cover in [AI Coding Agents: A Workflow That Holds Up](/blog/ai-coding-agents-workflow-that-holds-up/). The tools change often, and the habits of narrow scope, checkable output and approval for irreversible actions carry over from one to the next.',
+					},
+				],
+			},
+		],
+	},
+
+	{
 		slug: 'ai-coding-agents-workflow-that-holds-up',
 		draft: false,
 		title: 'AI Coding Agents: A Workflow That Holds Up',

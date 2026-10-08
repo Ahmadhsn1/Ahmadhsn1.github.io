@@ -24,6 +24,7 @@ A post goes live when its time has passed and a deploy has run after that. Set `
 
 | Post | Primary query | Related queries | Intent | Source project |
 | --- | --- | --- | --- | --- |
+| grok-bot-use-cases-automate-work | grok bot use cases | what is grok bot, grok team bots, grok agents, automate email with ai agent, ai chief of staff | Business owner or professional who wants to automate recurring work | None (scheduled for 2026-10-12 09:00 PKT) |
 | ai-coding-agents-workflow-that-holds-up | ai coding agents workflow | agentic coding, agents.md, claude code best practices, ai code review checklist, cursor vs copilot workflow | Working developer who uses coding agents | None (general guide), scheduled for 2026-10-10 09:00 PKT |
 | azure-openai-outage-keep-ai-app-running | azure openai outage | azure openai down, llm fallback strategy, ai api outage what to do, circuit breaker llm, multi provider llm | Developer or founder running an LLM app on the critical path | The Copper Larder |
 | rtx-spark-local-ai-developers | rtx spark local ai | surface laptop ultra, run llm locally memory requirements, unified memory llm, windows ai agents, local llm vs cloud | Developer deciding whether local AI hardware matters | None (news briefing) |
@@ -44,7 +45,7 @@ No keyword tool with real volumes was available, so the phrases above come from 
 2. How I proved a test suite works by putting old bugs back (NoteMind). Query: how to test your tests, mutation testing practical.
 3. Firestore security rules as the whole backend (SpendSmart). Query: firestore security rules deny by default example.
 4. Adaptive coaching that asks before it changes anything (FitMind AI). Query: ai coach proposal approval human in the loop.
-5. AI agents in practice: use cases (including bots such as Grok), with links to articles where real people describe unusual ways they used them, and how to automate a business task with an agent. Only link to and summarise other people's articles with clear attribution, never copy them, and stay neutral about every company.
+5. (Written, scheduled for 12 October: Grok Bot use cases.) More agent use cases for other products, with links to articles where real people describe unusual setups. Only link to and summarise other people's articles with clear attribution, never copy them, and stay neutral about every company.
 6. How to hire an AI engineer in Pakistan (commercial bridge, written last, once there are three technical posts to link to).
 
 ## Publishing checklist
