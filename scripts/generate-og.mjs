@@ -231,7 +231,7 @@ const fitTags = (tags, max = 42) => tags.reduce((kept, tag) => (kept.join('').le
 
 function blogCard(post) {
 	const accent = accentFor(post)
-	const size = post.title.length <= 36 ? 74 : post.title.length <= 52 ? 64 : 56
+	const size = post.title.length <= 32 ? 76 : post.title.length <= 44 ? 66 : post.title.length <= 52 ? 62 : 56
 	const card = codeCard(post, accent)
 	const minutes = readingMinutes(post)
 	const date = new Date(`${post.published}T00:00:00Z`).toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC'})

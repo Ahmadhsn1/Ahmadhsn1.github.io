@@ -8,8 +8,13 @@ Generic explainers ("RAG chunking strategies", "what is tool calling") are alrea
 
 Each post must leave the reader able to do something: working code, a test to run, or a checklist to apply on Monday morning.
 
+## Scheduling a post
+
+A post goes live when its time has passed and a deploy has run after that. Set `published: '2026-10-10'` (goes live at the start of that day in Pakistan time) or add `publishAt: '2026-10-10T09:00:00+05:00'` for an exact moment, push it, and the post stays hidden from the blog, sitemap, RSS and search until then. `.github/workflows/deploy.yml` also deploys every day at 04:15 UTC (09:15 in Pakistan), so a due post appears by itself, and IndexNow is told only about pages dated that day. Preview a future day with `BUILD_TIME=2026-10-10T10:00:00+05:00 npm run build`. The text of a scheduled post is visible in the public repository before it goes live, so do not schedule anything confidential.
+
 ## Writing rules
 
+- Never criticise a company or a product. Report facts, attribute them, and teach the engineering lesson.
 - First person, plain sentences, uneven rhythm. No dashes of any kind in the prose (rephrase "multi tenant", "top k" and so on).
 - Only claim numbers that are in the project README. Never invent a story. The best upgrade to any post is one real moment from the owner ("this broke in production on...").
 - Open with the answer (the `answer` field is shown as a highlighted summary and is what search and AI answers quote).
@@ -19,6 +24,7 @@ Each post must leave the reader able to do something: working code, a test to ru
 
 | Post | Primary query | Related queries | Intent | Source project |
 | --- | --- | --- | --- | --- |
+| ai-coding-agents-workflow-that-holds-up | ai coding agents workflow | agentic coding, agents.md, claude code best practices, ai code review checklist, cursor vs copilot workflow | Working developer who uses coding agents | None (general guide), scheduled for 2026-10-10 09:00 PKT |
 | azure-openai-outage-keep-ai-app-running | azure openai outage | azure openai down, llm fallback strategy, ai api outage what to do, circuit breaker llm, multi provider llm | Developer or founder running an LLM app on the critical path | The Copper Larder |
 | rtx-spark-local-ai-developers | rtx spark local ai | surface laptop ultra, run llm locally memory requirements, unified memory llm, windows ai agents, local llm vs cloud | Developer deciding whether local AI hardware matters | None (news briefing) |
 | vibe-coding-vs-learning-to-code-freshers | vibe coding vs learning to code | should i still learn to code in 2026, will ai replace junior developers, learn programming with ai, vibe coding problems in production, freshers roadmap | Fresher or career changer deciding how to learn | None (general guide, links to the other posts) |
@@ -38,7 +44,8 @@ No keyword tool with real volumes was available, so the phrases above come from 
 2. How I proved a test suite works by putting old bugs back (NoteMind). Query: how to test your tests, mutation testing practical.
 3. Firestore security rules as the whole backend (SpendSmart). Query: firestore security rules deny by default example.
 4. Adaptive coaching that asks before it changes anything (FitMind AI). Query: ai coach proposal approval human in the loop.
-5. How to hire an AI engineer in Pakistan (commercial bridge, written last, once there are three technical posts to link to).
+5. AI agents in practice: use cases (including bots such as Grok), with links to articles where real people describe unusual ways they used them, and how to automate a business task with an agent. Only link to and summarise other people's articles with clear attribution, never copy them, and stay neutral about every company.
+6. How to hire an AI engineer in Pakistan (commercial bridge, written last, once there are three technical posts to link to).
 
 ## Publishing checklist
 

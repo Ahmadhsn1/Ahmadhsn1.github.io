@@ -2,13 +2,241 @@
 // README (see projects.js); the rest is general engineering the reader can reuse. See docs/BLOG.md
 // for the keyword plan and the writing rules (first person, plain sentences, no dashes in prose).
 //
-// `draft: true` keeps a post out of the blog index, sitemap, RSS and search results. Flip it to false
-// once the post has been read and approved; `VITE_INCLUDE_DRAFTS=1 npm run build` previews drafts.
+// `draft: true` keeps a post out of the blog index, sitemap, RSS and search results. A post whose `published`
+// day (or exact `publishAt`, for example '2026-10-10T09:00:00+05:00') is still in the future is hidden the same way
+// and appears on the first deploy after that moment. `VITE_INCLUDE_DRAFTS=1 npm run build` previews everything.
 //
 // Body blocks: {type: 'p' | 'code' | 'list', ...}. Inside text, [label](/path/) renders as a link and
 // `name` renders as inline code.
 
 export const posts = [
+	{
+		slug: 'ai-coding-agents-workflow-that-holds-up',
+		draft: false,
+		title: 'AI Coding Agents: A Workflow That Holds Up',
+		description: 'A practical agentic coding workflow: clear tickets, plans first, tests as guardrails, an AGENTS.md file and a review checklist that suits any coding agent.',
+		published: '2026-10-10',
+		publishAt: '2026-10-10T09:00:00+05:00',
+		updated: '2026-10-10',
+		project: null,
+		tags: ['AI coding agents', 'Agentic coding', 'Developer workflow', 'Code review'],
+		answer:
+			'Treat a coding agent like a fast colleague who needs a clear ticket and a way to check its own work. Write the task with acceptance criteria, ask for a plan before any code, give the agent commands that prove the change works, keep every diff small, and review it as the owner. Speed is the agent’s job. Judgment stays with you.',
+		sections: [
+			{
+				heading: 'Where the time goes now',
+				blocks: [
+					{
+						type: 'p',
+						text: 'Coding agents write and change code quickly, and they follow instructions well. That shifts where the effort goes in a project. Less of it is typing. More of it lands in two places: saying exactly what you want, and checking that you got it.',
+					},
+					{
+						type: 'p',
+						text: 'Both are old engineering skills. Writing a clear ticket and reviewing a change were always part of the job, and they matter more now because the cost of producing a change has dropped while the cost of understanding it has not. The workflow below does not depend on any vendor. It works whether your agent lives in a terminal, an editor or a pull request bot.',
+					},
+				],
+			},
+			{
+				heading: 'Write the task like a ticket',
+				blocks: [
+					{
+						type: 'p',
+						text: 'An agent fills every gap you leave with its own best guess. A vague request returns a confident answer to a question you did not quite ask. A useful task has four parts: the goal, the constraints, how to tell it is done, and what is out of scope.',
+					},
+					{
+						type: 'code',
+						lang: 'text',
+						text: `Goal
+Add a "resend verification email" button to the account page.
+
+Constraints
+Reuse the existing sendVerificationEmail service. Do not add dependencies.
+Limit resends to 3 per hour per user.
+
+Done when
+* A signed in user with an unverified email sees the button.
+* The fourth request within an hour returns a 429 and shows a clear message.
+* Tests cover the limit and the already verified case.
+
+Out of scope
+Email template changes, the signup flow, anything under /billing.`,
+					},
+					{
+						type: 'p',
+						text: 'The last section matters more than it looks. Without it, an agent will helpfully tidy things you never mentioned, and you end up reviewing a larger change than the one you wanted.',
+					},
+				],
+			},
+			{
+				heading: 'Ask for a plan before any code',
+				blocks: [
+					{
+						type: 'p',
+						text: 'For anything beyond a small edit, ask the agent to read the code and propose a plan, and do not let it change files until you have read that plan. Most agents have a planning or read only mode for exactly this. A plan is cheap to read and cheap to correct. A wrong plan caught here saves a wrong implementation and the review that would have followed.',
+					},
+					{
+						type: 'p',
+						text: 'When I read a plan I check three things. Does it touch only the files I expect? Does it reuse code that already exists instead of writing a parallel copy? Does it say how the change will be tested? If a plan proposes a new dependency or a new pattern, I ask why before it writes a line.',
+					},
+				],
+			},
+			{
+				heading: 'Make correctness something the agent can run',
+				blocks: [
+					{
+						type: 'p',
+						text: 'The biggest single improvement to agent output is giving it a way to check itself. If tests, type checks and linting run with one command, the agent can change code, run the command, read the failures and fix them without you in the loop.',
+					},
+					{
+						type: 'code',
+						lang: 'json',
+						text: `{
+  "scripts": {
+    "check": "eslint . && tsc --noEmit && vitest run"
+  }
+}`,
+					},
+					{
+						type: 'p',
+						text: 'Tell the agent in plain words to run that command before it says the task is finished. Better still, start from a failing test that describes the behaviour you want and let the agent make it pass. A test you wrote is a specification. A test the agent wrote for its own code can quietly confirm its own assumptions, so read those more closely than the code itself.',
+					},
+				],
+			},
+			{
+				heading: 'Keep every change small',
+				blocks: [
+					{
+						type: 'p',
+						text: 'Review quality falls quickly as a diff grows. A change you can read in a few minutes gets a real review. A change spread over thirty files gets a skim. Ask for one concern at a time, commit at checkpoints, and treat a revert as an ordinary tool instead of a failure.',
+					},
+					{
+						type: 'p',
+						text: 'You can enforce this instead of hoping for it. This script fails the build when a change is bigger than you agreed to review. Run it in CI against the branch you are merging.',
+					},
+					{
+						type: 'code',
+						lang: 'js',
+						text: `import { execFileSync } from 'node:child_process'
+
+const base = process.env.BASE_REF ?? 'origin/main'
+const maxFiles = 15
+const maxLines = 400
+
+const stat = execFileSync('git', ['diff', '--numstat', base + '...HEAD'], { encoding: 'utf8' })
+const rows = stat.trim().split('\\n').filter(Boolean).map((line) => line.split('\\t'))
+const files = rows.length
+const lines = rows.reduce((sum, [added, removed]) => sum + (Number(added) || 0) + (Number(removed) || 0), 0)
+
+if (files > maxFiles || lines > maxLines) {
+  console.error('Diff budget exceeded: ' + files + ' files, ' + lines + ' changed lines. Split this change.')
+  process.exit(1)
+}
+console.log('Diff within budget: ' + files + ' files, ' + lines + ' lines')`,
+					},
+					{
+						type: 'p',
+						text: 'Fifteen files and four hundred lines are a starting point, not a rule. Pick limits your team can genuinely review, and exclude lockfiles and generated files once they start causing false alarms.',
+					},
+				],
+			},
+			{
+				heading: 'Teach the repository with an instructions file',
+				blocks: [
+					{
+						type: 'p',
+						text: 'An agent begins each session knowing nothing about your project. Most tools read a plain text instructions file from the root of the repository. AGENTS.md has become a common shared name that several tools understand, and some tools also read a file of their own, such as CLAUDE.md. If your team uses more than one tool, keeping the shared rules in one place avoids them drifting apart.',
+					},
+					{
+						type: 'p',
+						text: 'What goes in it is short and practical: the commands to build and test, the conventions that are not obvious from reading the code, the folders that are off limits, and the mistakes that have happened before. Start small. Add a line when you see the same mistake twice, and where you can, add a test that fails if it returns, so the rule is enforced and not merely written down.',
+					},
+					{
+						type: 'code',
+						lang: 'text',
+						text: `# AGENTS.md
+
+## Commands
+* Run everything with: npm run check
+* Never run the seed script against a shared database.
+
+## Conventions
+* Money is stored as integer minor units. Never use floats for amounts.
+* New endpoints validate input with the shared schemas in src/schemas.
+
+## Off limits
+* Do not edit src/generated or any migration that has already run.`,
+					},
+				],
+			},
+			{
+				heading: 'Review it as the owner',
+				blocks: [
+					{
+						type: 'p',
+						text: 'When a pull request arrives, the reflex is to open the changed files. Start one step earlier. Read the task, decide what a correct change would look like, and then compare. Reviewing against intent catches the most expensive problem of all, a change that is neat and well tested and solves the wrong thing.',
+					},
+					{
+						type: 'list',
+						items: [
+							'Scope. Did it do what the task asked and nothing more?',
+							'Edge cases. Empty input, a repeated click, a missing record, a slow network.',
+							'Security. Who is allowed to call this? Is every input validated? Are secrets kept out of the code and the logs?',
+							'Dependencies. Did it add a package, and is that justified?',
+							'Performance. Queries inside loops, lists with no limit, whole files loaded into memory.',
+							'Tests. Would they fail if the feature were broken?',
+						],
+					},
+					{
+						type: 'p',
+						text: 'This kind of review rests on fundamentals. If you are earlier in your career, the guide on [vibe coding versus learning to code](/blog/vibe-coding-vs-learning-to-code-freshers/) covers the basics that make it possible.',
+					},
+				],
+			},
+			{
+				heading: 'Know when to take the keyboard back',
+				blocks: [
+					{
+						type: 'p',
+						text: 'Some situations are better handled by hand, or at least with you driving closely.',
+					},
+					{
+						type: 'list',
+						items: [
+							'The same error has come back three times in a row.',
+							'The requirement is unclear and the agent is guessing between interpretations.',
+							'The code is security sensitive: authentication, permissions or payments.',
+							'The action cannot be undone, such as a data migration or a delete.',
+						],
+					},
+					{
+						type: 'p',
+						text: 'Apply the same least privilege you would give a new teammate. Work on a branch, keep production credentials out of reach, and restrict destructive commands so a bad guess costs you a revert and not a recovery.',
+					},
+				],
+			},
+			{
+				heading: 'The loop in one place',
+				blocks: [
+					{
+						type: 'list',
+						items: [
+							'Write the ticket with a goal, constraints, a definition of done and what is out of scope.',
+							'Ask for a plan and read it before any file changes.',
+							'Have the agent run the check command and fix what fails.',
+							'Keep the diff small enough to review properly.',
+							'Review against intent, then against the checklist.',
+							'Record any repeated mistake in the instructions file, ideally with a test.',
+						],
+					},
+					{
+						type: 'p',
+						text: 'Expect the first few tasks to feel slower while you write tickets and set up checks. The payoff is that the output starts arriving in a state you can trust and review quickly, and that is where the time saving from an agent actually comes from.',
+					},
+				],
+			},
+		],
+	},
+
 	{
 		slug: 'azure-openai-outage-keep-ai-app-running',
 		draft: false,
@@ -26,11 +254,11 @@ export const posts = [
 				blocks: [
 					{
 						type: 'p',
-						text: 'According to a [postmortem write up by Artur Markus](https://www.arturmarkus.com/postmortem-azures-sweden-central-ai-outage-and-the-18-region-gateway-failure-24-hours-later/), Azure OpenAI Service, Foundry Agent Service, Foundry Models and Cognitive Services in the Sweden Central region failed for 5 hours and 55 minutes on 29 September 2026, from 10:03 to 15:58 UTC. Customers saw intermittent request failures, higher latency and HTTP 5XX errors against model and data plane APIs. Microsoft described it as a platform issue without technical detail.',
+						text: 'According to a [postmortem write up by Artur Markus](https://www.arturmarkus.com/postmortem-azures-sweden-central-ai-outage-and-the-18-region-gateway-failure-24-hours-later/), Azure OpenAI Service, Foundry Agent Service, Foundry Models and Cognitive Services in the Sweden Central region failed for 5 hours and 55 minutes on 29 September 2026, from 10:03 to 15:58 UTC. Customers saw intermittent request failures, higher latency and HTTP 5XX errors against model and data plane APIs. Every cloud and model provider has incidents at some point, so this is not a post about blame. It is about how to engineer for the day it happens to you.',
 					},
 					{
 						type: 'p',
-						text: 'The same write up describes a separate networking incident the next day that touched gateways in 18 regions. It says the duration and cause come from third parties and are not confirmed by Microsoft, so I treat that part as unconfirmed. It also notes that as of 6 October no public post incident review existed for either event. For the confirmed record, read the official [Azure status history](https://azure.status.microsoft/en-us/status/history) rather than anyone’s summary, including mine.',
+						text: 'The same write up mentions a separate networking incident the next day across several regions, but I am not drawing conclusions from it because those details have not been confirmed. For the confirmed record, the official [Azure status history](https://azure.status.microsoft/en-us/status/history) is the place to look, rather than anyone’s summary, including mine.',
 					},
 					{
 						type: 'p',
@@ -260,7 +488,7 @@ test('falls back when the first provider is down', async () => {
 					},
 					{
 						type: 'p',
-						text: 'A few details differ between outlets, such as which specific open models were named and how much RAM they need, so I am relying only on the hardware and platform points that several sources agree on. Check Microsoft’s own page before you spend money, and wait for independent benchmarks.',
+						text: 'A few details differ between outlets, such as which specific open models were named and how much RAM they need, so I am relying only on the hardware and platform points that several sources agree on. Microsoft’s own product page is the place to confirm final specs and prices, and independent benchmarks will fill in the performance picture.',
 					},
 				],
 			},
@@ -273,7 +501,7 @@ test('falls back when the first provider is down', async () => {
 					},
 					{
 						type: 'p',
-						text: 'Capacity is only half the story. How fast the memory can feed the chip decides how many tokens per second you get, and I have not seen verified bandwidth or throughput numbers yet. That is why I would not buy on the keynote alone.',
+						text: 'Capacity is only half the story. How fast the memory can feed the chip decides how many tokens per second you get, and I have not seen verified bandwidth or throughput numbers yet. That is why independent benchmarks are worth waiting for.',
 					},
 				],
 			},
@@ -401,7 +629,7 @@ export async function complete(messages, { private: isPrivate = false } = {}) {
 							'Run the memory math for the models you actually want to use, with your real context length.',
 							'Put local and cloud behind one function so you can move requests either way.',
 							'Decide which request types must never leave the device.',
-							'Wait for independent tokens per second numbers before buying hardware on a keynote.',
+							'Look for independent tokens per second numbers before choosing hardware.',
 						],
 					},
 				],
@@ -1455,4 +1683,11 @@ create policy "members read their shop's sales"
 
 const includeDrafts = import.meta.env.VITE_INCLUDE_DRAFTS === '1'
 
-export const livePosts = () => posts.filter((post) => includeDrafts || !post.draft).sort((a, b) => b.published.localeCompare(a.published))
+// Set by vite.config.js for the whole build, so the server render and the browser always agree on what is live.
+const now = typeof __BUILD_TIME__ === 'number' ? __BUILD_TIME__ : Date.now()
+
+// A post goes live once its publish time has passed. Without `publishAt` that is the start of its `published` day in Pakistan time.
+const startsAt = (post) => Date.parse(post.publishAt ?? `${post.published}T00:00:00+05:00`)
+
+export const livePosts = () =>
+	posts.filter((post) => includeDrafts || (!post.draft && startsAt(post) <= now)).sort((a, b) => b.published.localeCompare(a.published))

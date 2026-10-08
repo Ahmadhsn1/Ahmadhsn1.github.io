@@ -3,6 +3,10 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  # Posts dated in the future are hidden by the build (see vite.config.js). A daily deploy at 04:15 UTC, which is
+  # 09:15 in Pakistan, publishes the ones whose time has come. GitHub may start scheduled runs a few minutes late.
+  schedule:
+    - cron: '15 4 * * *'
   workflow_dispatch:
 
 permissions:
@@ -90,7 +94,16 @@ jobs:
     steps:
       - run: |
           host=$(echo "$PAGE_URL" | sed -E 's#https?://([^/]+)/?.*#\1#')
-          urls=$(curl -fsS "${PAGE_URL}sitemap.xml" | grep -o '<loc>[^<]*' | sed 's/<loc>//' | jq -R . | jq -s .)
+          sitemap=$(curl -fsS "${PAGE_URL}sitemap.xml" | tr -d '\n\t' | sed 's#</url>#</url>\n#g')
+          # The daily scheduled deploy only announces pages whose lastmod is today, so quiet days send nothing.
+          if [ "$GITHUB_EVENT_NAME" = "schedule" ]; then
+            sitemap=$(echo "$sitemap" | grep "<lastmod>$(date -u +%F)</lastmod>" || true)
+          fi
+          urls=$(echo "$sitemap" | grep -o '<loc>[^<]*' | sed 's/<loc>//' | jq -R . | jq -s .)
+          if [ "$(echo "$urls" | jq length)" = "0" ]; then
+            echo "No new pages to announce"
+            exit 0
+          fi
           jq -n --arg host "$host" --arg key "$INDEXNOW_KEY" --arg loc "${PAGE_URL}${INDEXNOW_KEY}.txt" --argjson urls "$urls" \
             '{host: $host, key: $key, keyLocation: $loc, urlList: $urls}' \
             | curl -fsS -X POST https://api.indexnow.org/indexnow -H 'Content-Type: application/json; charset=utf-8' -d @-
