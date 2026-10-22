@@ -30,7 +30,7 @@ export function Hero() {
 						</SplitWords>
 					</h1>
 					<p className="hero-intro">
-						I’m <strong>{site.name}</strong>, a full-stack engineer and AI engineer in {site.city}. Most LLM work stops at “it calls the model and runs on my machine.” Mine is engineered for the parts that
+						I’m <strong>{site.name}</strong>, a full stack developer in {site.city} who builds full stack AI systems. Most LLM work stops at “it calls the model and runs on my machine.” Mine is engineered for the parts that
 						break in production — token budgets, tenant isolation, revocation-aware sessions, and deploys that actually happen.
 					</p>
 					<div className="hero-actions">

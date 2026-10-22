@@ -18,7 +18,7 @@ const homeMeta = () => ({
 	slug: null,
 	path: '/',
 	title: `${site.name} | ${site.role} in ${site.location}`,
-	description: clip(`${site.name} (${site.githubHandle}): ${site.headline.charAt(0).toLowerCase()}${site.headline.slice(1)}. Builds AI products, web apps and Android apps. ${projects.length} shipped projects.`),
+	description: clip(`${site.name} (${site.githubHandle}): ${site.headline.charAt(0).toLowerCase()}${site.headline.slice(1)}. Builds full stack AI systems end to end. ${projects.length} shipped projects.`),
 	image: '/og.jpg',
 	imageAlt: `${site.name}, ${site.role} in ${site.city}. I build AI products that survive real users.`,
 })
