@@ -11,6 +11,172 @@
 
 export const posts = [
 	{
+		slug: 'how-to-test-llm-app-evals-ci',
+		draft: false,
+		title: 'How to Test an LLM App: Evals That Run in CI',
+		description: 'How a small team can test an AI feature before every release: about 50 real cases, cheap checks first, a calibrated judge and a CI gate you can set up in a week.',
+		published: '2026-10-22',
+		updated: '2026-10-22',
+		project: null,
+		tags: ['LLM evals', 'Promptfoo', 'GitHub Actions', 'AI engineering'],
+		answer:
+			'Collect about 50 real inputs, label each with the behaviour you expect instead of an exact answer, check what you can with plain code, use an LLM judge only for the rest and calibrate it against your own labels, then run the whole set on every pull request. That is enough to catch most regressions before users do.',
+		sections: [
+			{
+				heading: 'Why a normal test suite is not enough',
+				blocks: [
+					{
+						type: 'p',
+						text: 'A unit test says the same thing every time. A language model does not. You can change one sentence in a prompt, swap a model version, or let a provider update weights quietly, and the feature still returns something that looks fine. Nothing crashes. The answers just get a little worse, and you find out from a user.',
+					},
+					{
+						type: 'p',
+						text: 'The fix people keep landing on is an eval set: a fixed collection of inputs you run through the feature and score every time something changes. It is the same idea as a test suite, with scoring instead of exact matches.',
+					},
+				],
+			},
+			{
+				heading: 'Start with about 50 real inputs',
+				blocks: [
+					{
+						type: 'p',
+						text: 'Several practitioner guides suggest starting small, somewhere between 30 and 60 cases. What matters more than the count is where the cases come from. Real messages from real users beat inputs that another model invented, because invented inputs tend to be tidy and real ones are not. If the feature is not live yet, ask a few people who would use it to write the messages they would actually send.',
+					},
+					{
+						type: 'p',
+						text: 'Label each case with the behaviour you expect. Refuse. Call this tool. Ask a clarifying question. Answer from the supplied document. Labels like these survive a prompt rewrite, while an exact expected sentence breaks the first time the wording changes. Once the feature is live, replace a slice of the set each quarter with real failures so it does not go stale.',
+					},
+				],
+			},
+			{
+				heading: 'Use plain code wherever it works',
+				blocks: [
+					{
+						type: 'p',
+						text: 'A surprising number of checks need no model at all. Is the output valid JSON? Does it match the schema? Did the right tool get called with the right arguments? Does the reply mention a forbidden word, or leak a string it should never contain? One practitioner reports that roughly a third to 40 percent of their checks are this kind, and another puts it closer to 60 or 70 percent for agents. The exact share depends on the product, but the direction is the same. These checks are fast, free and never disagree with themselves.',
+					},
+					{
+						type: 'p',
+						text: 'Promptfoo is a free open source runner that handles both kinds of check. A small config looks like this:',
+					},
+					{
+						type: 'code',
+						lang: 'yaml',
+						text: `# promptfooconfig.yaml
+prompts:
+  - 'Convert the following English text to {{language}}: {{input}}'
+
+providers:
+  - openai:gpt-6-sol
+
+tests:
+  - vars:
+      language: French
+      input: Hello world
+    assert:
+      - type: contains
+        value: 'Bonjour le monde'
+
+  - vars:
+      language: Spanish
+      input: Where is the library?
+    assert:
+      - type: llm-rubric
+        value: Output is a Spanish translation that asks where the library is`,
+					},
+					{
+						type: 'p',
+						text: 'You run it with `npx promptfoo@latest eval` and open the results with `npx promptfoo@latest view`. The first test uses a plain substring check. The second hands a written rule to a judge model, which brings us to the part people get wrong.',
+					},
+				],
+			},
+			{
+				heading: 'Calibrate the judge before you trust it',
+				blocks: [
+					{
+						type: 'p',
+						text: 'An LLM judge is just another model with opinions. Before its scores gate anything, label about 50 cases yourself, let the judge score the same cases, and compare. One guide treats a disagreement rate above about 15 percent as a sign that the judge prompt needs work, and reports reaching around 91 percent agreement after a few hours of tuning. Repeat the check when the judge model changes.',
+					},
+					{
+						type: 'p',
+						text: 'If you compare two answers with a judge, run each pair twice with the order swapped and only count the results that agree. Models have a habit of favouring whichever answer they see first.',
+					},
+				],
+			},
+			{
+				heading: 'Make it a gate, then watch production',
+				blocks: [
+					{
+						type: 'p',
+						text: 'Promptfoo ships a GitHub Action that runs the eval on every pull request and posts the result as a comment. This is the workflow from its documentation. Save it under `.github/workflows/` and add `OPENAI_API_KEY` as a repository secret (the token for comments is supplied automatically):',
+					},
+					{
+						type: 'code',
+						lang: 'yaml',
+						text: `name: Prompt Evaluation
+
+on:
+  pull_request:
+    paths:
+      - 'prompts/**'
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: promptfoo/promptfoo-action@v1
+        with:
+          openai-api-key: \${{ secrets.OPENAI_API_KEY }}
+          github-token: \${{ secrets.GITHUB_TOKEN }}
+          prompts: 'prompts/**/*.json'
+          config: 'prompts/promptfooconfig.yaml'`,
+					},
+					{
+						type: 'p',
+						text: 'Change the paths to match your project. Then decide the rule: fail the build when an important score drops by more than a small margin. The same guide quotes a margin of 2 points, and a cost of about 42 cents and 90 seconds per run for its own suite. Your numbers will differ, but a few cases and a cheap model keep it small.',
+					},
+					{
+						type: 'p',
+						text: 'A fixed set only catches problems you already thought of. Sampling a small slice of yesterday’s real conversations and scoring them each night catches drift that the fixed set misses. Post the result somewhere the team will actually look. A score in a dashboard nobody opens does not count as having evals.',
+					},
+				],
+			},
+			{
+				heading: 'A one week plan',
+				blocks: [
+					{
+						type: 'list',
+						items: [
+							'Day 1 and 2: collect 30 to 50 real inputs and write the expected behaviour next to each.',
+							'Day 3: write the plain code checks. Schema, tool name, forbidden strings.',
+							'Day 4: add a judge rubric for what code cannot check, then compare it with your own labels.',
+							'Day 5: add the run to CI and set the failure margin.',
+							'Afterwards: add every real failure you meet as a new case.',
+						],
+					},
+					{
+						type: 'p',
+						text: 'None of this needs a platform or a budget. It needs a file of cases and the habit of adding to it whenever something goes wrong.',
+					},
+				],
+			},
+			{
+				heading: 'Sources',
+				blocks: [
+					{
+						type: 'p',
+						text: 'The numbers above are rules of thumb from practitioner write ups, not benchmarks. See [LLM Evals in 2026: A Practitioner’s Field Guide](https://dev.to/lamingsrb/llm-evals-in-2026-a-practitioners-field-guide-26if) for the set size, judge agreement and CI figures, and the [Promptfoo getting started guide](https://www.promptfoo.dev/docs/getting-started/) for the config format.',
+					},
+				],
+			},
+		],
+	},
+	{
 		slug: 'grok-bot-use-cases-automate-work',
 		draft: false,
 		title: 'Grok Bot Use Cases: How People Automate Work',
