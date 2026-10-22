@@ -39,7 +39,7 @@ export function Contact() {
 							worth <em>shipping?</em>
 						</SplitWords>
 					</h2>
-					<p className="contact-copy">Open to AI and full-stack engineering roles — remote, from Lahore. Tell me what you’re building.</p>
+					<p className="contact-copy">Open to AI and full stack engineering roles — remote, from Lahore. Tell me what you’re building.</p>
 					<div className="contact-actions">
 						<a className="btn btn-primary" href={`mailto:${site.email}`}>
 							Email me <span aria-hidden="true">→</span>

@@ -106,7 +106,7 @@ const home = () => {
 			div(
 				{gap: 36, alignItems: 'center'},
 				...stats.map(([value, label]) => div({flexDirection: 'column', gap: 2}, text({fontSize: 38, fontWeight: 600, color: '#ff6a3d'}, value), text({fontSize: 17, color: '#9a968d', ...mono}, label))),
-				div({marginLeft: 8, paddingLeft: 36, borderLeft: '1px solid #2a2a2e', flexDirection: 'column', gap: 4}, text({fontSize: 19, color: '#cfcac0', ...mono}, 'RAG · Agents'), text({fontSize: 19, color: '#cfcac0', ...mono}, 'SaaS · Android'))
+				div({marginLeft: 8, paddingLeft: 36, borderLeft: '1px solid #2a2a2e', flexDirection: 'column', gap: 4}, text({fontSize: 19, color: '#cfcac0', ...mono}, 'RAG · Agents'), text({fontSize: 19, color: '#cfcac0', ...mono}, 'SaaS · Postgres'))
 			)
 		),
 	])

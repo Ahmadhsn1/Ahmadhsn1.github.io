@@ -8,7 +8,7 @@ export const faq = [
 	},
 	{
 		question: 'What kind of software does Ahmad Hassan build?',
-		answer: 'AI products such as retrieval-augmented generation (RAG) assistants and tool-calling agents, full-stack web applications with React, Next.js and NestJS, multi-tenant SaaS on PostgreSQL and Supabase, and native Android apps in Kotlin and Java.',
+		answer: 'AI products such as retrieval-augmented generation (RAG) assistants and tool-calling agents, full stack web applications with React, Next.js and NestJS, multi-tenant SaaS on PostgreSQL and Supabase, and native Android apps in Kotlin and Java.',
 	},
 	{
 		question: `Is Ahmad Hassan available for work in ${site.city}?`,

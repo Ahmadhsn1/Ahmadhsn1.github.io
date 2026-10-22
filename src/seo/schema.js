@@ -12,7 +12,7 @@ const ids = {
 }
 
 const knowsAbout = [
-	'Full-stack development',
+	'Full stack development',
 	'AI engineering',
 	'Software engineering',
 	'Web development',
@@ -40,7 +40,7 @@ const person = () => ({
 		'@type': 'Occupation',
 		name: site.role,
 		occupationLocation: {'@type': 'City', name: site.city},
-		skills: ['Full-stack web development', 'LLM and RAG applications', 'Multi-tenant SaaS backends'].join(', '),
+		skills: ['Full stack web development', 'LLM and RAG applications', 'Multi-tenant SaaS backends'].join(', '),
 	},
 	knowsAbout,
 	sameAs: [site.github, site.linkedin],
