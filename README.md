@@ -115,3 +115,7 @@ The public address lives in one place, `VITE_SITE_URL` in `.env`. Canonical and 
 ## Roadmap
 
 Open work is tracked in [`docs/ROADMAP.md`](docs/ROADMAP.md).
+
+## Security
+
+See [SECURITY.md](SECURITY.md) for how to report a problem.
