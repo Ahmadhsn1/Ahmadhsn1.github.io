@@ -18,7 +18,12 @@ function Inline({text}) {
 				</a>
 			)
 		}
-		if (link) return <a key={index} href={link[2]}>{link[1]}</a>
+		if (link)
+			return (
+				<a key={index} href={link[2]}>
+					{link[1]}
+				</a>
+			)
 		if (part.startsWith('`')) return <code key={index}>{part.slice(1, -1)}</code>
 		return <Fragment key={index}>{part}</Fragment>
 	})

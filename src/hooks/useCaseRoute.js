@@ -1,4 +1,4 @@
-import {useCallback, useSyncExternalStore} from 'react'
+import { useCallback, useSyncExternalStore } from 'react'
 
 // Case studies have real URLs (/work/<slug>/) so each one can be indexed and shared.
 // Older shared links used #/work/<slug>, which are still understood.
@@ -43,10 +43,10 @@ let pushedByApp = false
 export function navigateHome(to = '/') {
 	const hash = to.includes('#') ? to.slice(to.indexOf('#') + 1) : ''
 	const scrollToTarget = (attempt = 0) => {
-		if (!hash) return window.scrollTo({top: 0, behavior: 'smooth'})
+		if (!hash) return window.scrollTo({ top: 0, behavior: 'smooth' })
 		const section = document.getElementById(hash)
 		// Opening the site straight on a case study mounts the sections a moment later.
-		if (section) section.scrollIntoView({behavior: 'smooth', block: 'start'})
+		if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' })
 		else if (attempt < 8) setTimeout(() => scrollToTarget(attempt + 1), 80)
 	}
 	const sheetWasOpen = readSlug() !== null
@@ -80,5 +80,5 @@ export function useCaseRoute() {
 		emit()
 	}, [])
 
-	return {slug, open, close}
+	return { slug, open, close }
 }
